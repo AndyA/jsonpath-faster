@@ -26,15 +26,6 @@ const makeTokenMatcher = t => {
   return tok => match(tok, t);
 };
 
-const identifiers = {
-  root: makeTokenMatcher({ expression: { type: "root", value: "$" } }),
-  childMember: makeTokenMatcher({
-    expression: { type: "identifier" },
-    scope: "child",
-    operation: "member"
-  })
-};
-
 const js = expr => JSON.stringify(expr);
 
 const compiler = [
@@ -50,9 +41,9 @@ const compiler = [
     },
     gen: (ctx, tok) =>
       ctx.code(
-        `if (${js(tok.expression.value)} in ${ctx.lvar}) { ${ctx.chain(
+        `if (${js(tok.expression.value)} in ${ctx.lval}) ${ctx.block(
           "." + tok.expression.value
-        )} }`
+        )}`
       )
   },
   {
@@ -64,9 +55,9 @@ const compiler = [
     gen: (ctx, tok) => {
       const i = ctx.sym("i");
       return ctx
-        .scope()
+        .frame()
         .use("iterateAll")
-        .code(`iterateAll(${ctx.lvar}, ${i} => { ${ctx.chain(`[${i}]`)} });`);
+        .code(`iterateAll(${ctx.lval}, ${i} => ${ctx.block(`[${i}]`)});`);
     }
   },
   {
@@ -75,25 +66,38 @@ const compiler = [
       console.log(`Unknown token: ${inspect(tok)}`);
     }
   }
-].map(({ when, gen }) => ({
+].map(({ when, ...rest }) => ({
   when: makeTokenMatcher(when),
-  gen
+  ...rest
 }));
 
 const lib = {
-  iterateAll: [
-    `const iterateAll = (obj, cb) => {`,
-    `  if (Array.isArray(obj)) for (const i of obj) cb(i);`,
-    `  else for (const i in obj) cb(i);`,
-    `};`
-  ]
+  isObject: {
+    code: [`const isObject = o => o === Object(o);`]
+  },
+  iterateAll: {
+    use: ["isObject"],
+    code: [
+      `const iterateAll = (obj, cb) => {`,
+      `  if (Array.isArray(obj)) for (const i of obj) cb(i);`,
+      `  else if (isObject(obj)) for (const i in obj) cb(i);`,
+      `};`
+    ]
+  }
+};
+
+const search = (obj, cb, ...path) => {
+  if (Array.isArray(obj)) {
+    for (let i = 0; i < obj.length; i++) {}
+  }
 };
 
 // How to handle the need to collect paths for jp.nodes()?
 // flag in ctx?
 // inject additional ops into the ast?
 
-const compile = (compiler, lib, ast, ctx, lastly) => {
+const compile = (compiler, lib, path, ctx, lastly) => {
+  const ast = jp.parse(path);
   const despatch = (ast, ctx) => {
     const [tok, ...tail] = ast;
 
@@ -112,7 +116,7 @@ const compile = (compiler, lib, ast, ctx, lastly) => {
   const prepend = [];
 
   const context = {
-    lvar: "obj",
+    lval: "obj",
     prepend: [],
 
     sym(pfx) {
@@ -124,24 +128,29 @@ const compile = (compiler, lib, ast, ctx, lastly) => {
     },
 
     use(req) {
-      if (!lib[req]) throw new Error(`No ${req} in library`);
-      if (!reqs.has(req)) {
-        prepend.push(lib[req].join("\n"));
-        reqs.add(req);
-      }
+      if (reqs.has(req)) return this;
+      reqs.add(req);
+      const lo = lib[req];
+      if (!lo) throw new Error(`No ${req} in library`);
+      for (const dep of lo.use || []) this.use(dep);
+      prepend.push(`// use ${req}`, lo.code.join("\n"), "\n");
       return this;
     },
 
-    scope() {
+    frame() {
       const v = this.sym("v");
-      this.prepend.push(`const ${v} = ${this.lvar};`);
-      this.lvar = v;
+      this.prepend.push(`const ${v} = ${this.lval};`);
+      this.lval = v;
       return this;
     },
 
     chain(lvx) {
-      if (lvx) return this.next({ ...this, lvar: this.lvar + lvx });
+      if (lvx) return this.next({ ...this, lval: this.lval + lvx });
       return this.next(this);
+    },
+
+    block(lvx) {
+      return `{ ${this.chain(lvx)} }`;
     },
 
     ...ctx
@@ -149,24 +158,12 @@ const compile = (compiler, lib, ast, ctx, lastly) => {
 
   const code = despatch(ast, context);
 
-  return [...prepend, code].join("\n");
+  return [...prepend, `// ${path} on ${context.lval}`, code].join("\n");
 };
 
 //const path = "$.foo.bar[*]..id";
 const path = "$.foo.bar[*].id[*]";
-const ast = jp.parse(path);
-const code = compile(compiler, lib, ast, {}, ctx => {
-  console.log(`Lastly ${inspect(ctx)}`);
-  return `cb(${ctx.lvar});`;
-});
+const code = compile(compiler, lib, path, {}, ctx => `cb(${ctx.lval});`);
 //console.log(code);
 const pretty = prettier.format(code, { filepath: "code.js" });
 console.log(pretty);
-//console.log(inspect(ast));
-
-//for (const tok of ast) {
-//  console.log(JSON.stringify(tok));
-//  for (const test in identifiers) {
-//    if (identifiers[test](tok)) console.log(`  ${test}`);
-//  }
-//}

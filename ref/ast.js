@@ -191,6 +191,17 @@ module.exports = [
     ]
   },
   {
+    path: "$..*",
+    ast: [
+      { expression: { type: "root", value: "$" } },
+      {
+        expression: { type: "wildcard", value: "*" },
+        scope: "descendant",
+        operation: "member"
+      }
+    ]
+  },
+  {
     path: "$..book[(@.length-1)]",
     ast: [
       { expression: { type: "root", value: "$" } },
@@ -324,17 +335,6 @@ module.exports = [
         },
         scope: "child",
         operation: "subscript"
-      }
-    ]
-  },
-  {
-    path: "$..*",
-    ast: [
-      { expression: { type: "root", value: "$" } },
-      {
-        expression: { type: "wildcard", value: "*" },
-        scope: "descendant",
-        operation: "member"
       }
     ]
   }

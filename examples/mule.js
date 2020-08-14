@@ -58,6 +58,7 @@ const paths = [
   "$..author", // All authors
   "$.store..price", // The price of everything in the store
   "$..book[2]", // The third book
+  "$..*", // All members of JSON structure
   "$..book[(@.length-1)]", // The last book via script subscript
   "$..book[-1:]", // The last book via slice
   "$..book[0,1]", // The first two books via subscript union
@@ -65,8 +66,7 @@ const paths = [
   "$..book[?(@.isbn)]", // Filter all books with isbn number
   "$..book[?(@.price<10)]", // Filter all books cheaper than 10
   "$..book[?(@.price==8.95)]", // Filter all books that cost 8.95
-  '$..book[?(@.price<30 && @.category=="fiction")]', // Filter all fiction books cheaper than 30
-  "$..*" // All members of JSON structure
+  '$..book[?(@.price<30 && @.category=="fiction")]' // Filter all fiction books cheaper than 30
 ];
 
 const parsed = paths.map(path => ({ path, ast: jp.parse(path) }));
