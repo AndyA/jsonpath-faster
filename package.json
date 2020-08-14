@@ -1,0 +1,22 @@
+{
+  "name": "jsonpath-faster",
+  "version": "0.0.1",
+  "description": "A jsonpath implementation that compiles to javascript.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AndyA/jsonpath-faster.git"
+  },
+  "keywords": [
+    "jsonpath"
+  ],
+  "author": "Andy Armstrong <andy@hexten.net>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AndyA/jsonpath-faster/issues"
+  },
+  "homepage": "https://github.com/AndyA/jsonpath-faster#readme"
+}
