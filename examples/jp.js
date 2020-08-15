@@ -43,7 +43,7 @@ const compiler = [
     gen: (ctx, tok) => {
       const i = js(tok.expression.value);
       return ctx.code(
-        `if (${i} in ${ctx.lval}) ${ctx.block(i, "." + tok.expression.value)}`
+        `if (${ctx.lval}[${i}] !== undefined) ${ctx.block(i, "." + tok.expression.value)}`
       );
     }
   },
@@ -207,7 +207,7 @@ const func = code => {
   return gen.toFunction({});
 };
 
-const paths = ["$.foo.bar[*].id[*]", "$..*"];
+const paths = ["$.foo.bar[*].id[*]", "$.foo..*", "$.foo..*.id.*"];
 
 for (const path of paths) {
   console.log(`*** ${path}`);
