@@ -2,6 +2,7 @@
 
 const util = require("util");
 const jp = require("jsonpath");
+const genfun = require("generate-function");
 const prettier = require("prettier");
 
 const inspect = obj =>
@@ -79,7 +80,7 @@ const lib = {
     use: ["isObject"],
     code: [
       `const iterateAll = (obj, cb) => {`,
-      `  if (Array.isArray(obj)) for (const i of obj) cb(i);`,
+      `  if (Array.isArray(obj)) for (let i = 0; i < obj.length; i++) cb(i);`,
       `  else if (isObject(obj)) for (const i in obj) cb(i);`,
       `};`
     ]
@@ -161,9 +162,29 @@ const compile = (compiler, lib, path, ctx, lastly) => {
   return [...prepend, `// ${path} on ${context.lval}`, code].join("\n");
 };
 
+const func = code => {
+  const gen = genfun();
+  gen(`(obj, cb) => { ${code} }`);
+  return gen.toFunction({});
+};
+
 //const path = "$.foo.bar[*]..id";
 const path = "$.foo.bar[*].id[*]";
 const code = compile(compiler, lib, path, {}, ctx => `cb(${ctx.lval});`);
 //console.log(code);
 const pretty = prettier.format(code, { filepath: "code.js" });
 console.log(pretty);
+const f = func(code);
+const obj = {
+  baz: {},
+  foo: {
+    bar: [
+      { name: "Pizzo" },
+      { id: { name: "Smoo", email: "sam@mrstth.com" } },
+      { id: { name: "Andy", email: "andy@hexten.net" } }
+    ]
+  }
+};
+f(obj, val => {
+  console.log(val);
+});
