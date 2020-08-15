@@ -48,6 +48,7 @@ const compiler = [
     }
   },
   {
+    // $.foo[*] / $.foo.*
     when: {
       expression: { type: "wildcard", value: "*" },
       scope: "child",
@@ -59,6 +60,22 @@ const compiler = [
         .frame()
         .use("iterateAll")
         .code(`iterateAll(${ctx.lval}, ${i} => ${ctx.block(i, `[${i}]`)});`);
+    }
+  },
+  {
+    // $..*
+    when: {
+      expression: { type: "wildcard", value: "*" },
+      scope: "descendant",
+      operation: "member"
+    },
+    gen: (ctx, tok) => {
+      const o = ctx.sym("o");
+      const p = ctx.sym("p");
+      return ctx
+        .frame()
+        .use("search")
+        .code(`search(${ctx.lval}, (${o}, ${p}) => ${ctx.block(p, [o])});`);
     }
   },
   {
@@ -84,12 +101,17 @@ const lib = {
       `  else if (isObject(obj)) for (const i in obj) cb(i);`,
       `};`
     ]
-  }
-};
-
-const search = (obj, cb, ...path) => {
-  if (Array.isArray(obj)) {
-    for (let i = 0; i < obj.length; i++) {}
+  },
+  search: {
+    use: ["isObject"],
+    code: [
+      `const search = (obj, cb, ...path) => {`,
+      `  cb(obj, path);`,
+      `  if (Array.isArray(obj))`,
+      `    for (let i = 0; i < obj.length; i++) search(obj[i], cb, ...path, i);`,
+      `  else if (isObject(obj)) for (const i in obj) search(obj[i], cb, ...path, i);`,
+      `};`
+    ]
   }
 };
 
@@ -146,7 +168,10 @@ const compile = (compiler, lib, path, ctx, lastly, trackPath = true) => {
     },
 
     chainNext(lvx) {
-      if (lvx) return this.next({ ...this, lval: this.lval + lvx });
+      if (lvx) {
+        if (Array.isArray(lvx)) return this.next({ ...this, lval: lvx[0] });
+        return this.next({ ...this, lval: this.lval + lvx });
+      }
       return this.next(this);
     },
 
@@ -182,23 +207,32 @@ const func = code => {
   return gen.toFunction({});
 };
 
-//const path = "$.foo.bar[*]..id";
-const path = "$.foo.bar[*].id[*]";
-const code = compile(compiler, lib, path, {}, ctx => `cb(${ctx.lval}, path);`);
-//console.log(code);
-const pretty = prettier.format(code, { filepath: "code.js" });
-console.log(pretty);
-const f = func(code);
-const obj = {
-  baz: {},
-  foo: {
-    bar: [
-      { name: "Pizzo" },
-      { id: { name: "Smoo", email: "sam@mrstth.com" } },
-      { id: { name: "Andy", email: "andy@hexten.net" } }
-    ]
-  }
-};
-f(obj, (val, path) => {
-  console.log(val, path);
-});
+const paths = ["$.foo.bar[*].id[*]", "$..*"];
+
+for (const path of paths) {
+  console.log(`*** ${path}`);
+  const code = compile(
+    compiler,
+    lib,
+    path,
+    {},
+    ctx => `cb(${ctx.lval}, path);`
+  );
+  //console.log(code);
+  const pretty = prettier.format(code, { filepath: "code.js" });
+  console.log(pretty);
+  const f = func(code);
+  const obj = {
+    baz: {},
+    foo: {
+      bar: [
+        { name: "Pizzo" },
+        { id: { name: "Smoo", email: "sam@mrstth.com" } },
+        { id: { name: "Andy", email: "andy@hexten.net" } }
+      ]
+    }
+  };
+  f(obj, (val, path) => {
+    console.log(val, jp.stringify(path));
+  });
+}
