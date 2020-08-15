@@ -32,7 +32,7 @@ const js = expr => JSON.stringify(expr);
 const compiler = [
   {
     when: { expression: { type: "root", value: "$" } },
-    gen: (ctx, tok) => ctx.chain()
+    gen: (ctx, tok) => ctx.chain(js("$"))
   },
   {
     when: {
@@ -40,12 +40,12 @@ const compiler = [
       scope: "child",
       operation: "member"
     },
-    gen: (ctx, tok) =>
-      ctx.code(
-        `if (${js(tok.expression.value)} in ${ctx.lval}) ${ctx.block(
-          "." + tok.expression.value
-        )}`
-      )
+    gen: (ctx, tok) => {
+      const i = js(tok.expression.value);
+      return ctx.code(
+        `if (${i} in ${ctx.lval}) ${ctx.block(i, "." + tok.expression.value)}`
+      );
+    }
   },
   {
     when: {
@@ -58,7 +58,7 @@ const compiler = [
       return ctx
         .frame()
         .use("iterateAll")
-        .code(`iterateAll(${ctx.lval}, ${i} => ${ctx.block(`[${i}]`)});`);
+        .code(`iterateAll(${ctx.lval}, ${i} => ${ctx.block(i, `[${i}]`)});`);
     }
   },
   {
@@ -97,13 +97,13 @@ const search = (obj, cb, ...path) => {
 // flag in ctx?
 // inject additional ops into the ast?
 
-const compile = (compiler, lib, path, ctx, lastly) => {
+const compile = (compiler, lib, path, ctx, lastly, trackPath = true) => {
   const ast = jp.parse(path);
-  const despatch = (ast, ctx) => {
+  const despatch = (ast, ctx, lastly) => {
     const [tok, ...tail] = ast;
 
     const next = ctx => {
-      if (tail.length) return despatch(tail, ctx);
+      if (tail.length) return despatch(tail, ctx, lastly);
       return lastly(ctx);
     };
 
@@ -145,19 +145,33 @@ const compile = (compiler, lib, path, ctx, lastly) => {
       return this;
     },
 
-    chain(lvx) {
+    chainNext(lvx) {
       if (lvx) return this.next({ ...this, lval: this.lval + lvx });
       return this.next(this);
     },
 
-    block(lvx) {
-      return `{ ${this.chain(lvx)} }`;
+    chain(part, lvx) {
+      const n = this.chainNext(lvx);
+      if (!trackPath) return n;
+      return `stack.push(${part}); ${n}; stack.pop();`;
+    },
+
+    block(part, lvx) {
+      return `{ ${this.chain(part, lvx)} }`;
     },
 
     ...ctx
   };
 
-  const code = despatch(ast, context);
+  const leaf = (lastly => {
+    if (trackPath) {
+      prepend.push(`const stack = []`);
+      return ctx => `const path = stack.flat(); ${lastly(ctx)}`;
+    }
+    return lastly;
+  })(lastly);
+
+  const code = despatch(ast, context, leaf);
 
   return [...prepend, `// ${path} on ${context.lval}`, code].join("\n");
 };
@@ -170,7 +184,7 @@ const func = code => {
 
 //const path = "$.foo.bar[*]..id";
 const path = "$.foo.bar[*].id[*]";
-const code = compile(compiler, lib, path, {}, ctx => `cb(${ctx.lval});`);
+const code = compile(compiler, lib, path, {}, ctx => `cb(${ctx.lval}, path);`);
 //console.log(code);
 const pretty = prettier.format(code, { filepath: "code.js" });
 console.log(pretty);
@@ -185,6 +199,6 @@ const obj = {
     ]
   }
 };
-f(obj, val => {
-  console.log(val);
+f(obj, (val, path) => {
+  console.log(val, path);
 });
