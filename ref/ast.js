@@ -159,6 +159,28 @@ module.exports = [
     ]
   },
   {
+    path: "$..[1]",
+    ast: [
+      { expression: { type: "root", value: "$" } },
+      {
+        expression: { type: "numeric_literal", value: 1 },
+        scope: "descendant",
+        operation: "subscript"
+      }
+    ]
+  },
+  {
+    path: "$..[(@.length-1)]",
+    ast: [
+      { expression: { type: "root", value: "$" } },
+      {
+        expression: { type: "script_expression", value: "(@.length-1)" },
+        scope: "descendant",
+        operation: "subscript"
+      }
+    ]
+  },
+  {
     path: "$.store..price",
     ast: [
       { expression: { type: "root", value: "$" } },

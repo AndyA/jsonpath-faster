@@ -89,6 +89,7 @@ const compiler = [
     when: {},
     gen: (ctx, tok) => {
       console.log(`Unknown token: ${inspect(tok)}`);
+      return ctx.chain(js("!"));
     }
   }
 ].map(({ when, ...rest }) => ({
@@ -97,6 +98,25 @@ const compiler = [
 }));
 
 const search = (obj, cb, ...path) => {
+  if (Array.isArray(obj)) {
+    // This appears to be how jsonpath does it.
+    for (let i = 0; i < obj.length; i++) cb(obj, i, ...path, i);
+    for (let i = 0; i < obj.length; i++) search(obj[i], cb, ...path, i);
+  } else if (isObject(obj)) {
+    for (const i in obj) cb(obj, i, ...path, i);
+    for (const i in obj) search(obj[i], cb, ...path, i);
+  }
+};
+
+// the pred needs to represent
+//    a literal object key
+//    a literal array index
+//    an array slice
+//    a function that yields a key / index
+//    a filter function
+//    a wildcard
+
+const searchFor = (obj, cb, pred, ...path) => {
   if (Array.isArray(obj)) {
     // This appears to be how jsonpath does it.
     for (let i = 0; i < obj.length; i++) cb(obj, i, ...path, i);
@@ -221,8 +241,9 @@ const func = code => {
 };
 
 const paths = [
-  "$..*"
-  //"$.foo.bar[*].id[*]", "$.foo..*", "$.foo..*.id.*"
+  //  "$..*",
+  //  "$.foo.bar[*].id[*]", "$.foo..*", "$.foo..*.id.*",
+  "$..foo"
 ];
 
 for (const path of paths) {
