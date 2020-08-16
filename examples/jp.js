@@ -43,7 +43,10 @@ const compiler = [
     gen: (ctx, tok) => {
       const i = js(tok.expression.value);
       return ctx.code(
-        `if (${ctx.lval}[${i}] !== undefined) ${ctx.block(i, "." + tok.expression.value)}`
+        `if (${ctx.lval}[${i}] !== undefined) ${ctx.block(
+          i,
+          "." + tok.expression.value
+        )}`
       );
     }
   },
@@ -70,12 +73,16 @@ const compiler = [
       operation: "member"
     },
     gen: (ctx, tok) => {
+      const i = ctx.sym("i");
       const o = ctx.sym("o");
       const p = ctx.sym("p");
       return ctx
-        .frame()
         .use("search")
-        .code(`search(${ctx.lval}, (${o}, ${p}) => ${ctx.block(p, [o])});`);
+        .code(
+          `search(${ctx.lval}, (${o}, ${i}, ...${p}) => ${ctx.block(p, [
+            `${o}[${i}]`
+          ])});`
+        );
     }
   },
   {
@@ -88,6 +95,19 @@ const compiler = [
   when: makeTokenMatcher(when),
   ...rest
 }));
+
+const search = (obj, cb, ...path) => {
+  if (Array.isArray(obj))
+    for (let i = 0; i < obj.length; i++) {
+      cb(obj, i, ...path, i);
+      search(obj[i], cb, ...path, i);
+    }
+  else if (isObject(obj))
+    for (const i in obj) {
+      cb(obj, i, ...path, i);
+      search(obj[i], cb, ...path, i);
+    }
+};
 
 const lib = {
   isObject: {
@@ -104,14 +124,7 @@ const lib = {
   },
   search: {
     use: ["isObject"],
-    code: [
-      `const search = (obj, cb, ...path) => {`,
-      `  cb(obj, path);`,
-      `  if (Array.isArray(obj))`,
-      `    for (let i = 0; i < obj.length; i++) search(obj[i], cb, ...path, i);`,
-      `  else if (isObject(obj)) for (const i in obj) search(obj[i], cb, ...path, i);`,
-      `};`
-    ]
+    code: [`const search = ${search.toString()};`]
   }
 };
 
@@ -207,7 +220,10 @@ const func = code => {
   return gen.toFunction({});
 };
 
-const paths = ["$.foo.bar[*].id[*]", "$.foo..*", "$.foo..*.id.*"];
+const paths = [
+  "$..*"
+  //"$.foo.bar[*].id[*]", "$.foo..*", "$.foo..*.id.*"
+];
 
 for (const path of paths) {
   console.log(`*** ${path}`);
@@ -232,7 +248,12 @@ for (const path of paths) {
       ]
     }
   };
-  f(obj, (val, path) => {
-    console.log(val, jp.stringify(path));
+  console.log(`\njsonpath: ${path}`);
+  for (const { path: p, value } of jp.nodes(obj, path))
+    console.log(jp.stringify(p), value);
+
+  console.log(`\njsonpath-faster: ${path}`);
+  f(obj, (value, p) => {
+    console.log(jp.stringify(p), value);
   });
 }
