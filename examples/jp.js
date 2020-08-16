@@ -97,16 +97,16 @@ const compiler = [
 }));
 
 const search = (obj, cb, ...path) => {
-  if (Array.isArray(obj))
-    for (let i = 0; i < obj.length; i++) {
-      cb(obj, i, ...path, i);
-      search(obj[i], cb, ...path, i);
-    }
-  else if (isObject(obj))
+  if (Array.isArray(obj)) {
+    // This appears to be how jsonpath does it.
+    for (let i = 0; i < obj.length; i++) cb(obj, i, ...path, i);
+    for (let i = 0; i < obj.length; i++) search(obj[i], cb, ...path, i);
+  } else if (isObject(obj)) {
     for (const i in obj) {
       cb(obj, i, ...path, i);
       search(obj[i], cb, ...path, i);
     }
+  }
 };
 
 const lib = {
