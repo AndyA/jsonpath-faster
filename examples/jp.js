@@ -189,11 +189,10 @@ const c = new Compiler(compiler, lib);
 
 for (const path of paths) {
   console.log(`*** ${path}`);
-  const code = c.compile(
-    path,
-    { trackPath: true },
-    ctx => `cb(${ctx.lval}, path);`
-  );
+  const code = c.compile(path, {
+    trackPath: true,
+    lastly: ctx => `cb(${ctx.lval}, path);`
+  });
   //console.log(code);
   const pretty = prettier.format(code, { filepath: "code.js" });
   console.log(pretty);
