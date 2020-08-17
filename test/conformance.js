@@ -53,9 +53,9 @@ const paths = [
   "$..author", // All authors
   "$..[1]", // All second elements
   "$.store..price", // The price of everything in the store
-  "$..book[2]" // The third book
-  //  "$..book[-1:]", // The last book via slice
-  //  "$..book[0,1]", // The first two books via subscript union
+  "$..book[2]", // The third book
+  "$..book[0,1]" // The first two books via subscript union
+  //    "$..book[-1:]", // The last book via slice
   //  "$..book[:2]", // The first two books via subscript array slice
   //  "$..[(@.length-1)]", // All last elements
   //  "$..book[(@.length-1)]", // The last book via script subscript
