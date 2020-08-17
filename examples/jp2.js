@@ -4,15 +4,8 @@ const util = require("util");
 const jp = require("jsonpath");
 const genfun = require("generate-function");
 const prettier = require("prettier");
-
+const { inspect } = require("../lib/util");
 const engine = require("../lib/engine");
-
-const inspect = obj =>
-  util.inspect(obj, {
-    depth: null,
-    sorted: true,
-    getters: true
-  });
 
 const func = code => {
   const gen = genfun();
