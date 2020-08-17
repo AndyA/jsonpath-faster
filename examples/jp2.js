@@ -56,9 +56,9 @@ const obj = {
 
 const paths = [
   //  "$..*" // All members of JSON structure
-  "$..book[0,1]" // The first two books via subscript union
-  //  "$..book[-1:]", // The last book via slice
-  //  "$..book[:2]", // The first two books via subscript array slice
+  //  "$..book[0,1]" // The first two books via subscript union
+  "$..book[-1:]" // The last book via slice
+  //  "$..book[:2]" // The first two books via subscript array slice
   //  "$.*"
   //  "$..*" // All members of JSON structure
   //  "$.store"
