@@ -87,9 +87,7 @@ for (const path of paths) {
     .add(`jp(${path})`, function() {
       jpi.push(jp.nodes(obj, path));
     })
-    .add(`jpf(${path})`, function() {
-      f();
-    });
+    .add(`jpf(${path})`, f);
 
   // add listeners
   suite
