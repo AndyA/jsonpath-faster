@@ -67,12 +67,12 @@ const paths = [
   //  "$.store..price", // The price of everything in the store
   //  "$..book[2]", // The third book
   //  "$..[(@.length-1)]" // All last elements
-  //  "$..book[(@.length-1)]", // The last book via script subscript
-  //  "$..book[?(@.isbn)]", // Filter all books with isbn number
+  "$..book[(@.length-1)]" // The last book via script subscript
+  //  "$..book[?(@.isbn)]" // Filter all books with isbn number
   //  "$..book[?(@.price<10)]", // Filter all books cheaper than 10
   //  "$..book[?(@.price==8.95)]", // Filter all books that cost 8.95
   //  '$..book[?(@.price<30 && @.category=="fiction")]' // Filter all fiction books cheaper than 30
-  "$..[2::2]"
+  //  "$..[2::2]"
 ];
 
 for (const path of paths) {
