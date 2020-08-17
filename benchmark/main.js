@@ -93,11 +93,15 @@ for (const path of paths) {
   // add listeners
   suite
     .on("cycle", function(event) {
-      console.log(String(event.target));
+      console.log(`  ${event.target}`);
     })
     .on("complete", function() {
+      //      this.forEach(r => console.log({ r }));
       console.log("Fastest is " + this.filter("fastest").map("name"));
     })
-    // run async
+    .on("error", function(e) {
+      console.error(e);
+      process.exit(1);
+    })
     .run();
 }
