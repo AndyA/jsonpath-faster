@@ -1,24 +1,9 @@
 "use strict";
 
-const util = require("util");
-const jp = require("jsonpath");
-const genfun = require("generate-function");
-const prettier = require("prettier");
-
+const tap = require("tap");
 const engine = require("../lib/engine");
-
-const inspect = obj =>
-  util.inspect(obj, {
-    depth: null,
-    sorted: true,
-    getters: true
-  });
-
-const func = code => {
-  const gen = genfun();
-  gen(`(obj, cb) => { ${code} }`);
-  return gen.toFunction({});
-};
+const genfun = require("generate-function");
+const jp = require("jsonpath");
 
 const obj = {
   store: {
@@ -55,20 +40,20 @@ const obj = {
 };
 
 const paths = [
-  //  "$.*"
-  //  "$..*" // All members of JSON structure
-  //  "$.store"
-  //  "$.store.bicycle",
-  //  '$.store.bicycle["color"]',
-  //  "$.store.*", // All things in store, which are some books and a red bicycle
-  //  "$.store[*]", // All things in store, which are some books and a red bicycle
-  //  "$.store.book[1]",
-  //  "$.store.book.1",
-  //  "$.store.book[*].author", // The authors of all books in the store
-  "$..author" // All authors
-  //  "$..[1]", // All second elements
-  //  "$.store..price", // The price of everything in the store
-  //  "$..book[2]", // The third book
+  "$.*",
+  "$..*", // All members of JSON structure
+  "$.store",
+  "$.store.bicycle",
+  '$.store.bicycle["color"]',
+  "$.store.*", // All things in store, which are some books and a red bicycle
+  "$.store[*]", // All things in store, which are some books and a red bicycle
+  "$.store.book[1]",
+  "$.store.book.1",
+  "$.store.book[*].author", // The authors of all books in the store
+  "$..author", // All authors
+  "$..[1]", // All second elements
+  "$.store..price", // The price of everything in the store
+  "$..book[2]" // The third book
   //  "$..[(@.length-1)]", // All last elements
   //  "$..book[(@.length-1)]", // The last book via script subscript
   //  "$..book[-1:]", // The last book via slice
@@ -80,24 +65,24 @@ const paths = [
   //  '$..book[?(@.price<30 && @.category=="fiction")]' // Filter all fiction books cheaper than 30
 ];
 
+const func = code => {
+  const gen = genfun();
+  gen(`(obj, cb) => { ${code} }`);
+  /* istanbul ignore next */
+  return gen.toFunction({});
+};
+
 for (const path of paths) {
-  console.log(`*** ${path}`);
   const code = engine.compile(path, {
     trackPath: true,
     lastly: ctx => `cb(${ctx.lval}, path);`
   });
 
-  //  console.log(code);
-  const pretty = prettier.format(code, { filepath: "code.js" });
-  console.log(pretty);
   const f = func(code);
+  const got = [];
+  f(obj, (value, path) => got.push({ value, path }));
 
-  console.log(`\njsonpath: ${path}`);
-  for (const { path: p, value } of jp.nodes(obj, path))
-    console.log(jp.stringify(p), value);
+  const ref = jp.nodes(obj, path);
 
-  console.log(`\njsonpath-faster: ${path}`);
-  f(obj, (value, p) => {
-    console.log(jp.stringify(p), value);
-  });
+  tap.same(got, ref, `nodes of ${path}`);
 }

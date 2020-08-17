@@ -1,3 +1,4 @@
 .*.sw?
+/.nyc_output/
 /Session.vim
 /node_modules/

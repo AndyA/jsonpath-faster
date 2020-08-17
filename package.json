@@ -4,7 +4,8 @@
   "description": "A jsonpath implementation that compiles to javascript.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "tap",
+    "tdd": "tap -w"
   },
   "repository": {
     "type": "git",
@@ -23,5 +24,8 @@
     "generate-function": "^2.3.1",
     "jsonpath": "^1.0.2",
     "prettier": "^2.0.5"
+  },
+  "devDependencies": {
+    "tap": "^14.10.8"
   }
 }
