@@ -49,11 +49,11 @@ const doc = {
 const paths = [
   "$.store",
   "$.store.bicycle",
+  '$.store.bicycle["color"]',
   "$.store.*", // All things in store, which are some books and a red bicycle
   "$.store[*]", // All things in store, which are some books and a red bicycle
   "$.store.book[1]",
   "$.store.book.1",
-  '$.store.bicycle["color"]',
   "$.store.book[*].author", // The authors of all books in the store
   "$..author", // All authors
   "$..[1]", // All second elements
