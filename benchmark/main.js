@@ -65,11 +65,10 @@ const paths = [
   //  '$..book[?(@.price<30 && @.category=="fiction")]' // Filter all fiction books cheaper than 30
 ];
 
-const func = code => {
+const func = (code, ctx) => {
   const gen = genfun();
   gen(`(obj, cb) => { ${code} }`);
-  /* istanbul ignore next */
-  return gen.toFunction({});
+  return gen.toFunction(ctx);
 };
 
 for (const path of paths) {
@@ -81,13 +80,15 @@ for (const path of paths) {
     trackPath: true,
     lastly: ctx => `jpf.push({value: ${ctx.lval}, path});`
   });
-  const f = func(code);
+  const f = func(code, { jpf });
 
   suite
     .add(`jp(${path})`, function() {
       jpi.push(jp.nodes(obj, path));
     })
-    .add(`jpf(${path})`, f);
+    .add(`jpf(${path})`, function() {
+      f(obj);
+    });
 
   // add listeners
   suite

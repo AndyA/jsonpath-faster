@@ -7,10 +7,10 @@ const prettier = require("prettier");
 const { inspect } = require("../lib/util");
 const engine = require("../lib/engine");
 
-const func = code => {
+const func = (code, ctx) => {
   const gen = genfun();
   gen(`(obj, cb) => { ${code} }`);
-  return gen.toFunction({});
+  return gen.toFunction(ctx);
 };
 
 const obj = {
@@ -48,7 +48,7 @@ const obj = {
 };
 
 const paths = [
-  //  "$..*" // All members of JSON structure
+  "$..*" // All members of JSON structure
   //  "$..book[0,1]" // The first two books via subscript union
   //  "$..book[-1:]" // The last book via slice
   //  "$..book[:2]" // The first two books via subscript array slice
@@ -67,7 +67,7 @@ const paths = [
   //  "$.store..price", // The price of everything in the store
   //  "$..book[2]", // The third book
   //  "$..[(@.length-1)]" // All last elements
-  "$..book[(@.length-1)]" // The last book via script subscript
+  //  "$..book[(@.length-1)]" // The last book via script subscript
   //  "$..book[?(@.isbn)]" // Filter all books with isbn number
   //  "$..book[?(@.price<10)]", // Filter all books cheaper than 10
   //  "$..book[?(@.price==8.95)]", // Filter all books that cost 8.95
@@ -79,13 +79,14 @@ for (const path of paths) {
   console.log(`*** ${path}`);
   const code = engine.compile(path, {
     trackPath: true,
-    lastly: ctx => `cb(${ctx.lval}, path);`
+    lastly: ctx => `nodes.push({value: ${ctx.lval}, path});`
   });
 
   //  console.log(code);
   const pretty = prettier.format(code, { filepath: "code.js" });
   console.log(pretty);
-  const f = func(code);
+  const nodes = [];
+  const f = func(code, { nodes });
 
   console.log(`\njsonpath: ${path}`);
   try {
@@ -96,7 +97,6 @@ for (const path of paths) {
   }
 
   console.log(`\njsonpath-faster: ${path}`);
-  f(obj, (value, p) => {
-    console.log(jp.stringify(p), value);
-  });
+  f(obj);
+  for (const { path: p, value } of nodes) console.log(jp.stringify(p), value);
 }
