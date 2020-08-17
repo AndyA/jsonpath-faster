@@ -17,68 +17,6 @@ const inspect = obj =>
 const json = obj => JSON.stringify(obj, null, 2);
 const js = expr => JSON.stringify(expr);
 
-// the selector can be
-//    a literal object key
-//    a literal array index
-//    an array slice
-//    a function that yields a key / index
-//    a filter function
-//    a wildcard
-
-const selectorCompiler = [
-  {
-    when: {
-      expression: { type: ["identifier", "string_literal", "numeric_literal"] },
-      operation: ["member", "subscript"]
-    },
-    gen: (ctx, tok) => {
-      const i = js(tok.expression.value);
-      return ctx.code(
-        `if (${ctx.lval}[${i}] !== undefined) ${ctx.block(
-          i,
-          "." + tok.expression.value
-        )}`
-      );
-    }
-  },
-  {
-    when: {
-      expression: { type: "wildcard", value: "*" },
-      operation: ["member", "subscript"]
-    },
-    gen: (ctx, tok) => {
-      const i = js(tok.expression.value);
-      const next = ctx.block(i, `[{${i}}]`);
-      return ctx.code({
-        i,
-        array: [
-          `for (let ${i} = 0; ${i} < ${ctx.lval}.length; ${i}++) ${next}`
-        ],
-        object: [`for (const ${i} in ${ctx.lval}) ${next}`]
-      });
-    }
-  }
-];
-
-const structureCompiler = [
-  {
-    when: { expression: { type: "root", value: "$" } },
-    gen: (ctx, tok) => ctx.chain(js("$"))
-  },
-  {
-    when: { scope: "child" },
-    gen: (ctx, tok) => {
-      // We sometimes need a function wrapper
-    }
-  },
-  {
-    when: { scope: "descendant" },
-    gen: (ctx, tok) => {
-      // We always need a function wrapper
-    }
-  }
-];
-
 const compiler = [
   {
     when: { expression: { type: "root", value: "$" } },
@@ -185,7 +123,7 @@ const paths = [
   //  "$..foo"
 ];
 
-const c = new Compiler(compiler, lib);
+const c = new Compiler(compiler, [], lib);
 
 for (const path of paths) {
   console.log(`*** ${path}`);
