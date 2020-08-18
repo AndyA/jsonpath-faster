@@ -8,7 +8,6 @@ const prettier = require("prettier");
 const { js, lv, isObject, inspect } = require("../lib/util");
 
 const selectorCompiler = require("../lib/compilers/selectors");
-const callbackCompiler = require("../lib/compilers/callback");
 const generatorCompiler = require("../lib/compilers/generator");
 const lib = require("../lib/compilers/lib");
 const Compiler = require("../lib/compiler");
@@ -78,7 +77,7 @@ const paths = [
   //  "$..[?(@.price)]" // Everything with a price
 ];
 
-const func = (code, ctx) => {
+const gfunc = (code, ctx) => {
   const gen = genfun();
   gen(`function* (obj) { ${code} }`);
   return gen.toFunction(ctx);
@@ -92,7 +91,7 @@ for (const path of paths) {
   });
 
   //  console.log(code);
-  const f = func(code, {});
+  const f = gfunc(code, {});
   const pretty = prettier.format("module.exports = " + f.toString(), {
     filepath: "code.js"
   });

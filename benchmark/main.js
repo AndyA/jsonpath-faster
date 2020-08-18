@@ -1,9 +1,17 @@
 "use strict";
 
-const engine = require("../lib/engine");
 const genfun = require("generate-function");
 const jp = require("jsonpath");
 const Benchmark = require("benchmark");
+
+const engine = require("../lib/engine");
+
+const selectorCompiler = require("../lib/compilers/selectors");
+const generatorCompiler = require("../lib/compilers/generator");
+const lib = require("../lib/compilers/lib");
+const Compiler = require("../lib/compiler");
+
+const gengine = new Compiler(generatorCompiler, selectorCompiler, lib);
 
 const obj = {
   store: {
@@ -74,6 +82,12 @@ const func = (code, ctx) => {
   return gen.toFunction(ctx);
 };
 
+const gfunc = (code, ctx) => {
+  const gen = genfun();
+  gen(`function* (obj) { ${code} }`);
+  return gen.toFunction(ctx);
+};
+
 const reporter = sendLine => {
   const splitName = name => name.split(/\s+/, 2);
 
@@ -104,7 +118,7 @@ const rep = reporter(row => console.log(row.map(c => `"${c}"`).join(",")));
 for (const path of paths) {
   const suite = new Benchmark.Suite();
 
-  const [jpi, jpf] = [[], []];
+  const [jpi, jpf, jpfg] = [[], [], []];
 
   const code = engine.compile(path, {
     trackPath: true,
@@ -113,12 +127,22 @@ for (const path of paths) {
 
   const f = func(code, { jpf });
 
+  const gcode = gengine.compile(path, {
+    trackPath: true,
+    lastly: ctx => `yield {value: ${ctx.lval}, path}`
+  });
+
+  const gf = gfunc(gcode);
+
   suite
     .add(`jp ${path}`, function() {
       jpi.push(jp.nodes(obj, path));
     })
     .add(`jpf ${path}`, function() {
       f(obj);
+    })
+    .add(`jpfg ${path}`, function() {
+      for (const rec of gf(obj)) jpfg.push(rec);
     });
 
   // add listeners
