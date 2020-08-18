@@ -73,7 +73,8 @@ const paths = [
   //  "$..book[?(@.price==8.95)]", // Filter all books that cost 8.95
   //  '$..book[?(@.price<30 && @.category=="fiction")]' // Filter all fiction books cheaper than 30
   //  "$..[2::2]"
-  "$..[?(@.price)]" // Everything with a price
+  //  "$..[?(@.price)]" // Everything with a price
+  "$..book..price" // All the book prices
 ];
 
 for (const path of paths) {
@@ -84,10 +85,10 @@ for (const path of paths) {
   });
 
   //  console.log(code);
-  const pretty = prettier.format(code, { filepath: "code.js" });
-  console.log(pretty);
   const nodes = [];
   const f = func(code, { nodes });
+  const pretty = prettier.format(f.toString(), { filepath: "code.js" });
+  console.log(pretty);
 
   console.log(`\njsonpath: ${path}`);
   try {
