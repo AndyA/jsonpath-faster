@@ -57,12 +57,15 @@ const paths = [
   "$..book[0,1]", // The first two books via subscript union
   "$..book[-1:]", // The last book via slice
   "$..book[:2]", // The first two books via subscript array slice
-  //  "$..[(@.length-1)]", // All last elements
   "$..book[(@.length-1)]" // The last book via script subscript
+
   //  "$..book[?(@.isbn)]", // Filter all books with isbn number
   //  "$..book[?(@.price<10)]", // Filter all books cheaper than 10
   //  "$..book[?(@.price==8.95)]", // Filter all books that cost 8.95
   //  '$..book[?(@.price<30 && @.category=="fiction")]' // Filter all fiction books cheaper than 30
+
+  //  jsonpath can't handle this
+  //  "$..[(@.length-1)]", // All last elements
 ];
 
 const func = (code, ctx) => {
@@ -70,6 +73,33 @@ const func = (code, ctx) => {
   gen(`(obj, cb) => { ${code} }`);
   return gen.toFunction(ctx);
 };
+
+const reporter = sendLine => {
+  const splitName = name => name.split(/\s+/, 2);
+
+  const cols = new Set();
+  let needHeader = true;
+
+  return res => {
+    const tests = new Set();
+    const rec = {};
+    res.forEach(r => {
+      const [col, test] = splitName(r.name);
+      cols.add(col);
+      tests.add(test);
+      rec[col] = r;
+    });
+    if (tests.size > 1)
+      throw new Error(`Multiple tests: ${[...tests].join(", ")}`);
+    if (needHeader) {
+      sendLine(["", ...cols]);
+      needHeader = false;
+    }
+    sendLine([...tests, ...[...cols].map(col => rec[col].hz)]);
+  };
+};
+
+const rep = reporter(row => console.log(row.map(c => `"${c}"`).join(",")));
 
 for (const path of paths) {
   const suite = new Benchmark.Suite();
@@ -80,24 +110,24 @@ for (const path of paths) {
     trackPath: true,
     lastly: ctx => `jpf.push({value: ${ctx.lval}, path});`
   });
+
   const f = func(code, { jpf });
 
   suite
-    .add(`jp(${path})`, function() {
+    .add(`jp ${path}`, function() {
       jpi.push(jp.nodes(obj, path));
     })
-    .add(`jpf(${path})`, function() {
+    .add(`jpf ${path}`, function() {
       f(obj);
     });
 
   // add listeners
   suite
     .on("cycle", function(event) {
-      console.log(`  ${event.target}`);
+      console.error(`  ${event.target}`);
     })
     .on("complete", function() {
-      //      this.forEach(r => console.log({ r }));
-      console.log("Fastest is " + this.filter("fastest").map("name"));
+      rep(this);
     })
     .on("error", function(e) {
       console.error(e);
