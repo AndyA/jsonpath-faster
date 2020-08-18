@@ -3,7 +3,7 @@
 const tap = require("tap");
 const genfun = require("generate-function");
 
-const { parseSlice, renderSlice } = require("../lib/slice");
+const { parseSlice, renderSlice, makeSlice } = require("../lib/slice");
 
 const list = ["a", "b", "c", "d", "e", "f", "g", "h", "i"];
 
@@ -35,9 +35,7 @@ function runSlice(list, slice) {
     }
   };
 
-  const [start, end, step] = parseSlice(slice);
-  const render = renderSlice(ctx, start, end, step);
-  const code = render("list", i => `out.push(list[${i}])`);
+  const code = makeSlice(ctx, slice)("list", i => `out.push(list[${i}])`);
   //  console.log(`// ${slice}\n${code}`);
 
   const gen = genfun();
