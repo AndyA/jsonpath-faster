@@ -5,7 +5,15 @@ const jp = require("jsonpath");
 const genfun = require("generate-function");
 const prettier = require("prettier");
 const { inspect } = require("../lib/util");
-const engine = require("../lib/engine");
+
+const selectorCompiler = require("../lib/compilers/selectors");
+const callbackCompiler = require("../lib/compilers/callback");
+const lib = require("../lib/compilers/lib");
+const Compiler = require("../lib/compiler");
+
+const generatorCompiler = [...callbackCompiler];
+
+const engine = new Compiler(generatorCompiler, selectorCompiler, lib);
 
 const func = (code, ctx) => {
   const gen = genfun();
@@ -52,7 +60,7 @@ const paths = [
   //  "$..book[0,1]" // The first two books via subscript union
   //  "$..book[-1:]" // The last book via slice
   //  "$..book[:2]" // The first two books via subscript array slice
-  //  "$.*"
+  "$.*"
   //  "$..*" // All members of JSON structure
   //  "$.store"
   //  "$.store.bicycle",
@@ -73,7 +81,7 @@ const paths = [
   //  "$..book[?(@.price==8.95)]", // Filter all books that cost 8.95
   //  '$..book[?(@.price<30 && @.category=="fiction")]' // Filter all fiction books cheaper than 30
   //  "$..[2::2]"
-  "$..[?(@.price)]" // Everything with a price
+  //  "$..[?(@.price)]" // Everything with a price
 ];
 
 for (const path of paths) {
@@ -86,18 +94,20 @@ for (const path of paths) {
   //  console.log(code);
   const pretty = prettier.format(code, { filepath: "code.js" });
   console.log(pretty);
-  const nodes = [];
-  const f = func(code, { nodes });
+  if (0) {
+    const nodes = [];
+    const f = func(code, { nodes });
 
-  console.log(`\njsonpath: ${path}`);
-  try {
-    for (const { path: p, value } of jp.nodes(obj, path))
-      console.log(jp.stringify(p), value);
-  } catch (e) {
-    console.log(`jp fail: ${e.message}`);
+    console.log(`\njsonpath: ${path}`);
+    try {
+      for (const { path: p, value } of jp.nodes(obj, path))
+        console.log(jp.stringify(p), value);
+    } catch (e) {
+      console.log(`jp fail: ${e.message}`);
+    }
+
+    console.log(`\njsonpath-faster: ${path}`);
+    f(obj);
+    for (const { path: p, value } of nodes) console.log(jp.stringify(p), value);
   }
-
-  console.log(`\njsonpath-faster: ${path}`);
-  f(obj);
-  for (const { path: p, value } of nodes) console.log(jp.stringify(p), value);
 }
