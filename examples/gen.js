@@ -4,22 +4,16 @@ const util = require("util");
 const jp = require("jsonpath");
 const genfun = require("generate-function");
 const prettier = require("prettier");
-const { inspect } = require("../lib/util");
+
+const { js, lv, isObject, inspect } = require("../lib/util");
 
 const selectorCompiler = require("../lib/compilers/selectors");
 const callbackCompiler = require("../lib/compilers/callback");
+const generatorCompiler = require("../lib/compilers/generator");
 const lib = require("../lib/compilers/lib");
 const Compiler = require("../lib/compiler");
 
-const generatorCompiler = [...callbackCompiler];
-
 const engine = new Compiler(generatorCompiler, selectorCompiler, lib);
-
-const func = (code, ctx) => {
-  const gen = genfun();
-  gen(`(obj, cb) => { ${code} }`);
-  return gen.toFunction(ctx);
-};
 
 const obj = {
   store: {
@@ -57,10 +51,10 @@ const obj = {
 
 const paths = [
   //  "$..*" // All members of JSON structure
-  //  "$..book[0,1]" // The first two books via subscript union
+  "$..book[0,1]" // The first two books via subscript union
   //  "$..book[-1:]" // The last book via slice
   //  "$..book[:2]" // The first two books via subscript array slice
-  "$.*"
+  //  "$.*"
   //  "$..*" // All members of JSON structure
   //  "$.store"
   //  "$.store.bicycle",
@@ -84,30 +78,34 @@ const paths = [
   //  "$..[?(@.price)]" // Everything with a price
 ];
 
+const func = (code, ctx) => {
+  const gen = genfun();
+  gen(`function* (obj) { ${code} }`);
+  return gen.toFunction(ctx);
+};
+
 for (const path of paths) {
   console.log(`*** ${path}`);
   const code = engine.compile(path, {
     trackPath: true,
-    lastly: ctx => `nodes.push({value: ${ctx.lval}, path});`
+    lastly: ctx => `yield {value: ${ctx.lval}, path}`
   });
 
   //  console.log(code);
-  const pretty = prettier.format(code, { filepath: "code.js" });
+  const f = func(code, {});
+  const pretty = prettier.format("module.exports = " + f.toString(), {
+    filepath: "code.js"
+  });
   console.log(pretty);
-  if (0) {
-    const nodes = [];
-    const f = func(code, { nodes });
 
-    console.log(`\njsonpath: ${path}`);
-    try {
-      for (const { path: p, value } of jp.nodes(obj, path))
-        console.log(jp.stringify(p), value);
-    } catch (e) {
-      console.log(`jp fail: ${e.message}`);
-    }
-
-    console.log(`\njsonpath-faster: ${path}`);
-    f(obj);
-    for (const { path: p, value } of nodes) console.log(jp.stringify(p), value);
+  console.log(`\njsonpath: ${path}`);
+  try {
+    for (const { path: p, value } of jp.nodes(obj, path))
+      console.log(jp.stringify(p), value);
+  } catch (e) {
+    console.log(`jp fail: ${e.message}`);
   }
+
+  console.log(`\njsonpath-faster: ${path}`);
+  for (const { path: p, value } of f(obj)) console.log(jp.stringify(p), value);
 }
