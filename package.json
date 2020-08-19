@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/AndyA/jsonpath-faster#readme",
   "dependencies": {
+    "esprima": "^4.0.1",
     "generate-function": "^2.3.1",
     "jsonpath": "^1.0.2",
     "prettier": "^2.0.5"
