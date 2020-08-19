@@ -71,8 +71,11 @@ const paths = [
 ];
 
 for (const path of paths) {
-  const got = jpc.nodes(obj, path);
-  const want = jp.nodes(obj, path);
-
-  tap.same(got, want, `nodes of ${path}`);
+  for (const method of ["query", "paths", "nodes"]) {
+    for (const count of [undefined, 1, 3]) {
+      const got = jpc[method](obj, path, count);
+      const want = jp[method](obj, path, count);
+      tap.same(got, want, `${method} of ${path} ${count && `count: ${count}`}`);
+    }
+  }
 }
