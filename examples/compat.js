@@ -1,8 +1,8 @@
 "use strict";
 
-const engine = require("../lib/engine");
-const makePath = require("../lib/compat/path");
+const jpc = require("..");
 const jp = require("jsonpath");
+
 const { inspect } = require("../lib/util");
 
 const obj = {
@@ -73,8 +73,6 @@ const paths = [
 
 for (const path of paths) {
   console.log(`*** ${path}`);
-  const code = makePath(engine, path);
-  //    const got = code.value(obj, {});
-  const got = code.apply(obj, v => v * 2);
+  const got = jpc.apply(obj, path, v => v * 2);
   console.log(inspect({ got, obj }));
 }
