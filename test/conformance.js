@@ -4,6 +4,7 @@ const tap = require("tap");
 const engine = require("../lib/engine");
 const genfun = require("generate-function");
 const jp = require("jsonpath");
+const jpc = require("..");
 
 const obj = {
   store: {
@@ -69,24 +70,9 @@ const paths = [
   //  "$..[(@.length-1)]", // All last elements
 ];
 
-const func = code => {
-  const gen = genfun();
-  gen(`(obj, cb) => { ${code} }`);
-  /* istanbul ignore next */
-  return gen.toFunction({});
-};
-
 for (const path of paths) {
-  const code = engine.compile(path, {
-    trackPath: true,
-    lastly: ctx => `cb(${ctx.lval}, path);`
-  });
+  const got = jpc.nodes(obj, path);
+  const want = jp.nodes(obj, path);
 
-  const f = func(code);
-  const got = [];
-  f(obj, (value, path) => got.push({ value, path }));
-
-  const ref = jp.nodes(obj, path);
-
-  tap.same(got, ref, `nodes of ${path}`);
+  tap.same(got, want, `nodes of ${path}`);
 }
