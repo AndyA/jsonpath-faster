@@ -71,11 +71,15 @@ const paths = [
 ];
 
 for (const path of paths) {
-  for (const method of ["query", "paths", "nodes"]) {
-    for (const count of [undefined, 1, 3]) {
-      const got = jpc[method](obj, path, count);
-      const want = jp[method](obj, path, count);
-      tap.same(got, want, `${method} of ${path} ${count && `count: ${count}`}`);
+  for (const go of [1, 2]) {
+    for (const method of ["query", "paths", "nodes"]) {
+      // TODO zero case doesn't work for us
+      for (const count of [undefined, /* 0, */ 1, 3]) {
+        const got = jpc[method](obj, path, count);
+        const want = jp[method](obj, path, count);
+        const cd = count === undefined ? "∞" : count;
+        tap.same(got, want, `go ${go}: ${method} of ${path} (count: ${cd})`);
+      }
     }
   }
 }

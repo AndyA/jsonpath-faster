@@ -2,16 +2,10 @@
 
 const genfun = require("generate-function");
 const jp = require("jsonpath");
+const jpc = require("..");
 const Benchmark = require("benchmark");
 
 const engine = require("../lib/engine");
-
-const selectorCompiler = require("../lib/compilers/selectors");
-const generatorCompiler = require("../lib/compilers/generator");
-const lib = require("../lib/compilers/lib");
-const Compiler = require("../lib/compiler");
-
-const gengine = new Compiler(generatorCompiler, selectorCompiler, lib);
 
 const obj = {
   store: {
@@ -76,18 +70,6 @@ const paths = [
   //  "$..[(@.length-1)]", // All last elements
 ];
 
-const func = (code, ctx) => {
-  const gen = genfun();
-  gen(`(obj, cb) => { ${code} }`);
-  return gen.toFunction(ctx);
-};
-
-const gfunc = (code, ctx) => {
-  const gen = genfun();
-  gen(`function* (obj) { ${code} }`);
-  return gen.toFunction(ctx);
-};
-
 const reporter = sendLine => {
   const splitName = name => name.split(/\s+/, 2);
 
@@ -118,32 +100,20 @@ const rep = reporter(row => console.log(row.map(c => `"${c}"`).join(",")));
 for (const path of paths) {
   const suite = new Benchmark.Suite();
 
-  const [jpi, jpf, jpfg] = [[], [], []];
+  const [jpi, jpf] = [[], []];
 
-  const code = engine.compile(path, {
-    trackPath: true,
-    lastly: ctx => `jpf.push({value: ${ctx.lval}, path});`
-  });
-
-  const f = func(code, { jpf });
-
-  const gcode = gengine.compile(path, {
-    trackPath: true,
-    lastly: ctx => `yield {value: ${ctx.lval}, path}`
-  });
-
-  const gf = gfunc(gcode);
-
-  suite
-    .add(`jp ${path}`, function() {
-      jpi.push(jp.nodes(obj, path));
-    })
-    .add(`jpf ${path}`, function() {
-      f(obj);
-    })
-    .add(`jpfg ${path}`, function() {
-      for (const rec of gf(obj)) jpfg.push(rec);
-    });
+  for (const method of ["query", "paths", "nodes"]) {
+    for (const count of [undefined, 1 /*, 3*/]) {
+      const name = `${path} ${method} ${count === undefined ? "∞" : count}`;
+      suite
+        .add(`jp ${name}`, function() {
+          jpi.push(jp[method](obj, path, count));
+        })
+        .add(`jpf ${name}`, function() {
+          jpf.push(jpc[method](obj, path, count));
+        });
+    }
+  }
 
   // add listeners
   suite
