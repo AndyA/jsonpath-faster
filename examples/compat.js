@@ -1,11 +1,9 @@
 "use strict";
 
-const util = require("util");
-const jp = require("jsonpath");
-const genfun = require("generate-function");
-const prettier = require("prettier");
-const { inspect } = require("../lib/util");
 const engine = require("../lib/engine");
+const makePath = require("../lib/compat/path");
+const jp = require("jsonpath");
+const { inspect } = require("../lib/util");
 
 const obj = {
   store: {
@@ -42,6 +40,7 @@ const obj = {
 };
 
 const paths = [
+  //  "$"
   //  "$..*" // All members of JSON structure
   //  "$..book[0,1]" // The first two books via subscript union
   //  "$..book[-1:]" // The last book via slice
@@ -53,13 +52,13 @@ const paths = [
   //  '$.store.bicycle["color"]',
   //  "$.store.*", // All things in store, which are some books and a red bicycle
   //  "$.store[*]", // All things in store, which are some books and a red bicycle
-  //  "$.store.book[1]",
+  //  "$.store.book[1]"
   //  "$.store.book.1",
   //  "$.store.book[*].author", // The authors of all books in the store
   //  "$..author" // All authors
   //  "$..[1]", // All second elements
   //  "$.store..price", // The price of everything in the store
-  //  "$..book[2]", // The third book
+  //  "$..book[2]" // The third book
   //  "$..[(@.length-1)]" // All last elements
   //  "$..book[(@.length-1)]" // The last book via script subscript
   //  "$..book[?(@.isbn)]" // Filter all books with isbn number
@@ -68,38 +67,14 @@ const paths = [
   //  '$..book[?(@.price<30 && @.category=="fiction")]' // Filter all fiction books cheaper than 30
   //  "$..[2::2]"
   //  "$..[?(@.price)]" // Everything with a price
-  "$..book..price" // All the book prices
+  //  "$..book..price" // All the book prices
+  "$..price"
 ];
-
-const func = (code, ctx) => {
-  const gen = genfun();
-  gen(`(obj, count) => { ${code} }`);
-  return gen.toFunction(ctx);
-};
 
 for (const path of paths) {
   console.log(`*** ${path}`);
-  const code = engine.compile(path, {
-    trackPath: true,
-    counted: true,
-    lastly: ctx => `nodes.push({value: ${ctx.lval}, path});`
-  });
-
-  //  console.log(code);
-  const nodes = [];
-  const f = func(code, { nodes });
-  const pretty = prettier.format(f.toString(), { filepath: "code.js" });
-  console.log(pretty);
-
-  console.log(`\njsonpath: ${path}`);
-  try {
-    for (const { path: p, value } of jp.nodes(obj, path))
-      console.log(jp.stringify(p), value);
-  } catch (e) {
-    console.log(`jp fail: ${e.message}`);
-  }
-
-  console.log(`\njsonpath-faster: ${path}`);
-  f(obj, 2);
-  for (const { path: p, value } of nodes) console.log(jp.stringify(p), value);
+  const code = makePath(engine, path);
+  //    const got = code.value(obj, {});
+  const got = code.apply(obj, v => v * 2);
+  console.log(inspect({ got, obj }));
 }
