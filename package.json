@@ -4,8 +4,8 @@
   "description": "A jsonpath implementation that compiles to javascript.",
   "main": "index.js",
   "scripts": {
-    "test": "tap",
-    "tdd": "tap -w"
+    "test": "tap test",
+    "tdd": "tap -w test"
   },
   "repository": {
     "type": "git",
