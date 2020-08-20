@@ -12,7 +12,6 @@ const safen = (ast, lval) => {
     ExpressionStatement: true,
 
     // Allowed in static-eval but denied here
-    //    CallExpression: false,
     ReturnStatement: false,
 
     CallExpression: (node, parent) =>

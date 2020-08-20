@@ -49,6 +49,8 @@ const positive = [
       { lval: { sel: "sel", a: "A", b: "B" }, want: "sel" }
     ]
   }
+  // Nice to have but beware the pathologies of REs.
+  //  { expr: "/foo/.test(@.name)", cases: [{ lval: { name: "foo" }, want: true }] }
 ];
 
 for (const { expr, cases } of positive) {
@@ -62,7 +64,7 @@ const tryExpr = (expr, lval) => {
   try {
     return runExpr(expr, lval);
   } catch (e) {
-    console.error(e.message);
+    //    console.error(e.message);
     throw e;
   }
 };
@@ -77,7 +79,7 @@ const negative = [
   { expr: "return", want: /illegal/i },
   { expr: 'throw new Error("Help!")', want: /bad node/i },
   { expr: "foo.@", want: /bad node/i },
-  { expr: "/foo/.test(@.name)", want: /./i }
+  { expr: "/foo/.test(@.name)", want: /bad node/i }
 ];
 
 for (const { expr, want } of negative)
