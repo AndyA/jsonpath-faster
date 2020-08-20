@@ -83,5 +83,5 @@ for (const expr of exprs) {
     }
   });
 
-  console.log(escodegen.generate(frag));
+  console.log(escodegen.generate(frag.body[0].expression));
 }
