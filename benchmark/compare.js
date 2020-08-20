@@ -14,7 +14,7 @@ const reporter = sendLine => {
     let tests;
     const rec = {};
     res.forEach(r => {
-      const [col, path, method, count] = r.name.split(/\s+/);
+      const [col, path, method, count] = r.name.split(/\t/);
       cols.add(col);
       if (!tests) tests = [path, method, count];
       rec[col] = r;
@@ -39,10 +39,10 @@ async function bm(things, spec) {
       for (const count of counts) {
         const suite = new Benchmark.Suite();
 
-        const name = `${path} ${method} ${count === undefined ? "∞" : count}`;
+        const name = `${path}\t${method}\t${count === undefined ? "∞" : count}`;
 
         for (const w of workers) {
-          suite.add(`${w.name} ${name}`, function() {
+          suite.add(`${w.name}\t${name}`, function() {
             w.jp[method](obj, path, count);
           });
         }
