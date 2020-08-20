@@ -2,6 +2,7 @@
 
 const Benchmark = require("benchmark");
 const getWorkers = require("./lib/worker");
+const csv = require("csv-stringify/lib/sync");
 
 const spec = require("./spec");
 
@@ -31,7 +32,7 @@ const reporter = sendLine => {
 async function bm(things, spec) {
   const { obj, paths, methods, counts } = spec;
   const workers = await getWorkers(things);
-  const rep = reporter(row => console.log(row.map(c => `"${c}"`).join(",")));
+  const rep = reporter(row => process.stdout.write(csv([row])));
 
   for (const path of paths) {
     for (const method of methods) {
@@ -64,10 +65,12 @@ async function bm(things, spec) {
   }
 }
 
-const things = ["jsonpath", "baseline", "HEAD"];
+const defaultThings = ["jsonpath", "baseline", "HEAD"];
 
 (async () => {
   try {
+    let things = process.argv.slice(2);
+    if (things.length === 0) things = defaultThings;
     await bm(things, spec);
   } catch (e) {
     console.error(e);

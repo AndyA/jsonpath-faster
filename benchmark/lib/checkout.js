@@ -6,6 +6,17 @@ const fs = require("fs");
 const del = require("del");
 const mkdirp = require("mkdirp");
 
+const slotBoard = () => {
+  const slots = {};
+  return (key, getter) =>
+    (slots[key] =
+      slots[key] ||
+      Promise.resolve(getter(key)).finally(res => {
+        delete slots[key];
+        return res;
+      }));
+};
+
 class Checkout {
   constructor(opt) {
     this.opt = Object.assign(
@@ -14,6 +25,7 @@ class Checkout {
       },
       opt || {}
     );
+    this.sb = slotBoard();
   }
 
   workDir(what) {
@@ -44,15 +56,17 @@ class Checkout {
   async checkout(what) {
     const dir = this.workDir(what);
 
-    const exists = await this.gotThings(dir, ".git", "package.json");
-    if (!exists) await this.clone(dir);
-    const git = sg({ baseDir: dir });
+    return await this.sb(what, async what => {
+      const exists = await this.gotThings(dir, ".git", "package.json");
+      if (!exists) await this.clone(dir);
+      const git = sg({ baseDir: dir });
 
-    await git.checkout("master");
-    await git.pull();
-    await git.checkout(what);
+      await git.checkout("master");
+      await git.pull();
+      await git.checkout(what);
 
-    return dir;
+      return dir;
+    });
   }
 }
 
