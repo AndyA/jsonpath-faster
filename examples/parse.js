@@ -6,17 +6,6 @@ const escodegen = require("escodegen");
 
 const { inspect } = require("../lib/util");
 
-const exprs = [
-  'lval.category=="fiction"',
-  "lval.isbn",
-  "lval.length-1",
-  "lval.price<10",
-  "lval.price==8.95",
-  "lval.price",
-  'lval.first["price"]'
-  //  "foo.bar"
-];
-
 const safen = (ast, lval) => {
   const allow = {
     Program: true,
@@ -53,10 +42,46 @@ const safen = (ast, lval) => {
   });
   return ast;
 };
+const mkIdent = () => {
+  const id = [];
+  for (let i = 0; i < 5; i++)
+    id.push(String.fromCharCode(Math.random() * 26 + 97));
+  return id.join("");
+};
+
+const mkUniqueIdent = expr => {
+  while (true) {
+    const id = mkIdent();
+    if (expr.indexOf(id) === -1) return id;
+  }
+};
+
+const exprs = [
+  //  '@.category=="fiction"',
+  //  "@.isbn",
+  //  "@.length-1",
+  //  "@.price<10",
+  //  "@.price==8.95",
+  //  "@.price",
+  '@.first["price"]'
+];
+
+const lval = "obj[3].id";
 
 for (const expr of exprs) {
-  const ast = esprima.parse(expr);
+  const alias = mkUniqueIdent(expr + lval);
+  const ast = esprima.parse(expr.replace(/@/g, alias));
   console.log(inspect(ast));
-  const safe = safen(ast, "lval");
-  console.log(escodegen.generate(safe));
+  const safe = safen(ast, alias);
+
+  const lvAst = esprima.parse(lval);
+  console.log(inspect(lvAst));
+  const frag = estraverse.replace(safe, {
+    enter: function(node) {
+      if (node.type === "Identifier" && node.name === alias)
+        return lvAst.body[0].expression;
+    }
+  });
+
+  console.log(escodegen.generate(frag));
 }
