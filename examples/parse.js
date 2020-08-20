@@ -12,13 +12,18 @@ const safen = (ast, lval) => {
     ExpressionStatement: true,
 
     // Allowed in static-eval but denied here
-    CallExpression: false,
+    //    CallExpression: false,
     ReturnStatement: false,
+
+    CallExpression: (node, parent) =>
+      !!(node.callee && node.callee.object && node.callee.object.regex),
 
     // Only access our lval
     MemberExpression: (node, parent) =>
       node.object &&
-      (node.object.type === "MemberExpression" || node.object.name === lval),
+      (node.object.type === "MemberExpression" ||
+        node.object.name === lval ||
+        node.object.regex),
 
     ArrayExpression: true,
     BinaryExpression: true,
@@ -36,8 +41,13 @@ const safen = (ast, lval) => {
   estraverse.traverse(ast, {
     enter(node, parent) {
       const rule = allow[node.type];
-      if (!rule || (typeof rule === "function" && !rule(node, parent)))
-        throw new Error(`Bad node: ${escodegen.generate(node)}`);
+      const ok = typeof rule === "function" ? rule(node, parent) : !!rule;
+      if (!ok) {
+        console.log(inspect({ node, parent }));
+        throw new Error(
+          `Bad node ${node.type}: ${escodegen.generate(node)} ${rule}`
+        );
+      }
     }
   });
   return ast;
@@ -63,7 +73,8 @@ const exprs = [
   //  "@.price<10",
   //  "@.price==8.95",
   //  "@.price",
-  '@.first["@price"]'
+  //  '@.first["@price"]'
+  "/foo/.test(@.name)"
 ];
 
 const lval = "obj[3].id";
