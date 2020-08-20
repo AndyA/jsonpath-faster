@@ -71,7 +71,10 @@ const paths = [
 ];
 
 const reporter = sendLine => {
-  const splitName = name => name.split(/\s+/, 2);
+  const splitName = name => {
+    const [n, ...rest] = name.split(/\s+/);
+    return [n, rest.join(" ")];
+  };
 
   const cols = new Set();
   let needHeader = true;
@@ -98,13 +101,14 @@ const reporter = sendLine => {
 const rep = reporter(row => console.log(row.map(c => `"${c}"`).join(",")));
 
 for (const path of paths) {
-  const suite = new Benchmark.Suite();
-
-  const [jpi, jpf] = [[], []];
-
   for (const method of ["query", "paths", "nodes"]) {
-    for (const count of [undefined, 1 /*, 3*/]) {
+    for (const count of [undefined, 1, 3, 100000]) {
+      const suite = new Benchmark.Suite();
+
+      const [jpi, jpf] = [[], []];
+
       const name = `${path} ${method} ${count === undefined ? "∞" : count}`;
+
       suite
         .add(`jp ${name}`, function() {
           jpi.push(jp[method](obj, path, count));
@@ -112,20 +116,20 @@ for (const path of paths) {
         .add(`jpf ${name}`, function() {
           jpf.push(jpc[method](obj, path, count));
         });
+
+      // add listeners
+      suite
+        .on("cycle", function(event) {
+          console.error(`  ${event.target}`);
+        })
+        .on("complete", function() {
+          rep(this);
+        })
+        .on("error", function(e) {
+          console.error(e);
+          process.exit(1);
+        })
+        .run();
     }
   }
-
-  // add listeners
-  suite
-    .on("cycle", function(event) {
-      console.error(`  ${event.target}`);
-    })
-    .on("complete", function() {
-      rep(this);
-    })
-    .on("error", function(e) {
-      console.error(e);
-      process.exit(1);
-    })
-    .run();
 }
