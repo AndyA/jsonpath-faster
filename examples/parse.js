@@ -63,25 +63,29 @@ const exprs = [
   //  "@.price<10",
   //  "@.price==8.95",
   //  "@.price",
-  '@.first["price"]'
+  '@.first["@price"]'
 ];
 
 const lval = "obj[3].id";
 
 for (const expr of exprs) {
-  const alias = mkUniqueIdent(expr + lval);
-  const ast = esprima.parse(expr.replace(/@/g, alias));
+  const lvar = mkUniqueIdent(expr + lval);
+  const ast = esprima.parse(expr.replace(/@/g, lvar));
   console.log(inspect(ast));
-  const safe = safen(ast, alias);
+  const safe = safen(ast, lvar);
 
   const lvAst = esprima.parse(lval);
   console.log(inspect(lvAst));
-  const frag = estraverse.replace(safe, {
+  const gen = estraverse.replace(safe, {
     enter: function(node) {
-      if (node.type === "Identifier" && node.name === alias)
+      if (node.type === "Identifier" && node.name === lvar)
         return lvAst.body[0].expression;
     }
   });
 
-  console.log(escodegen.generate(frag.body[0].expression));
+  const code = escodegen
+    .generate(gen.body[0].expression)
+    .replace(new RegExp(lvar, "g"), "@");
+
+  console.log(code);
 }
