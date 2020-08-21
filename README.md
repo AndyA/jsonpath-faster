@@ -4,12 +4,15 @@ Query JavaScript objects with JSONPath expressions. A faster compiling / cached 
 
 ## Compiled JSONPaths
 
-This module is designed to be 100% compatible with
-[jsonpath](https://www.npmjs.com/package/jsonpath) but considerably faster in
-many cases.
+This module is designed (and tested) to be 100% compatible with
+[jsonpath](https://www.npmjs.com/package/jsonpath).
+
+It compiles JSONpath expressions into the corresponding Javascript and caches
+the resulting code. For any JSONPath that is used more than a few times the
+speedup is considerable.
 
 Here are some comparative benchmarks. The first two numbers are operations per
-second. Each test involves a mix of `query`, `nodes` and `paths` with an without
+second. Each test involves a mix of `query`, `nodes` and `paths` with and without
 limiting counts.
 
 | JSONPath                    | jsonpath | jsonpath-faster | ratio  |
@@ -36,6 +39,8 @@ limiting counts.
 | `$.store.book.1`            |  73,105  |       8,764,344 | 119.91 |
 | `$.store.book[1]`           |  63,779  |       8,686,778 | 136.63 |
 | `$.store.bicycle["color"]`  |  59,106  |       8,244,142 | 139.54 |
+
+With longer paths the advantage increases.
 
 ## Memory usage
 
@@ -75,18 +80,18 @@ $ npm install jsonpath-faster
 Here are syntax and examples adapted from 
 [Stefan Goessner's original post](http://goessner.net/articles/JsonPath/) introducing JSONPath in 2007.
 
-JSONPath         | Description
------------------|------------
-`$`               | The root object/element
+JSONPath           | Description
+-------------------|------------
+`$`                | The root object/element
 `@`                | The current object/element
 `.`                | Child member operator
-`..`	         | Recursive descendant operator; JSONPath borrows this syntax from E4X
-`*`	         | Wildcard matching all objects/elements regardless their names
-`[]`	         | Subscript operator
-`[,]`	         | Union operator for alternate names or array indices as a set
+`..`               | Recursive descendant operator; JSONPath borrows this syntax from E4X
+`*`                | Wildcard matching all objects/elements regardless their names
+`[]`               | Subscript operator
+`[,]`              | Union operator for alternate names or array indices as a set
 `[start:end:step]` | Array slice operator borrowed from ES4 / Python
 `?()`              | Applies a filter (script) expression via static evaluation
-`()`	         | Script expression via static evaluation 
+`()`	           | Script expression via static evaluation 
 
 Given this sample data set, see example expressions below:
 
@@ -150,7 +155,9 @@ JSONPath                      | Description
 
 #### jp.query(obj, pathExpression[, count])
 
-Find elements in `obj` matching `pathExpression`.  Returns an array of elements that satisfy the provided JSONPath expression, or an empty array if none were matched.  Returns only first `count` elements if specified.
+Find elements in `obj` matching `pathExpression`.  Returns an array of elements
+that satisfy the provided JSONPath expression, or an empty array if none were
+matched.  Returns only first `count` elements if specified.
 
 ```javascript
 var authors = jp.query(data, '$..author');
@@ -159,7 +166,10 @@ var authors = jp.query(data, '$..author');
 
 #### jp.paths(obj, pathExpression[, count])
 
-Find paths to elements in `obj` matching `pathExpression`.  Returns an array of element paths that satisfy the provided JSONPath expression. Each path is itself an array of keys representing the location within `obj` of the matching element.  Returns only first `count` paths if specified.
+Find paths to elements in `obj` matching `pathExpression`.  Returns an array of
+element paths that satisfy the provided JSONPath expression. Each path is
+itself an array of keys representing the location within `obj` of the matching
+element.  Returns only first `count` paths if specified.
 
 
 ```javascript
@@ -174,7 +184,10 @@ var paths = jp.paths(data, '$..author');
 
 #### jp.nodes(obj, pathExpression[, count])
 
-Find elements and their corresponding paths in `obj` matching `pathExpression`.  Returns an array of node objects where each node has a `path` containing an array of keys representing the location within `obj`, and a `value` pointing to the matched element.  Returns only first `count` nodes if specified.
+Find elements and their corresponding paths in `obj` matching `pathExpression`.
+Returns an array of node objects where each node has a `path` containing an
+array of keys representing the location within `obj`, and a `value` pointing to
+the matched element.  Returns only first `count` nodes if specified.
 
 ```javascript
 var nodes = jp.nodes(data, '$..author');
@@ -188,7 +201,9 @@ var nodes = jp.nodes(data, '$..author');
 
 #### jp.value(obj, pathExpression[, newValue])
 
-Returns the value of the first element matching `pathExpression`.  If `newValue` is provided, sets the value of the first matching element and returns the new value.
+Returns the value of the first element matching `pathExpression`.  If
+`newValue` is provided, sets the value of the first matching element and
+returns the new value.
 
 #### jp.parent(obj, pathExpression)
 
@@ -196,7 +211,10 @@ Returns the parent of the first matching element.
 
 #### jp.apply(obj, pathExpression, fn)
 
-Runs the supplied function `fn` on each matching element, and replaces each matching element with the return value from the function.  The function accepts the value of the matching element as its only parameter.  Returns matching nodes with their updated values.
+Runs the supplied function `fn` on each matching element, and replaces each
+matching element with the return value from the function.  The function accepts
+the value of the matching element as its only parameter.  Returns matching
+nodes with their updated values.
 
 
 ```javascript
@@ -211,7 +229,8 @@ var nodes = jp.apply(data, '$..author', function(value) { return value.toUpperCa
 
 #### jp.parse(pathExpression)
 
-Parse the provided JSONPath expression into path components and their associated operations.
+Parse the provided JSONPath expression into path components and their
+associated operations.
 
 ```javascript
 var path = jp.parse('$..author');
@@ -223,7 +242,10 @@ var path = jp.parse('$..author');
 
 #### jp.stringify(path)
 
-Returns a path expression in string form, given a path.  The supplied path may either be a flat array of keys, as returned by `jp.nodes` for example, or may alternatively be a fully parsed path expression in the form of an array of path components as returned by `jp.parse`.
+Returns a path expression in string form, given a path.  The supplied path may
+either be a flat array of keys, as returned by `jp.nodes` for example, or may
+alternatively be a fully parsed path expression in the form of an array of path
+components as returned by `jp.parse`.
 
 ```javascript
 var pathExpression = jp.stringify(['$', 'store', 'book', 0, 'author']);
@@ -251,7 +273,13 @@ until it has been.
 
 #### Grammar
 
-This project uses a formal BNF [grammar](https://github.com/dchester/jsonpath/blob/master/lib/grammar.js) to parse JSONPath expressions, an attempt at reverse-engineering the intent of the original implementation, which parses via a series of creative regular expressions.  The original regex approach can sometimes be forgiving for better or for worse (e.g., `$['store]` => `$['store']`), and in other cases, can be just plain wrong (e.g. `[` => `$`). 
+This project uses a formal BNF
+[grammar](https://github.com/dchester/jsonpath/blob/master/lib/grammar.js) to
+parse JSONPath expressions, an attempt at reverse-engineering the intent of the
+original implementation, which parses via a series of creative regular
+expressions.  The original regex approach can sometimes be forgiving for better
+or for worse (e.g., `$['store]` => `$['store']`), and in other cases, can be
+just plain wrong (e.g. `[` => `$`). 
 
 #### Other Minor Differences
 
