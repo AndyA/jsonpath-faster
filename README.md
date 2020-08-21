@@ -42,12 +42,19 @@ limiting counts.
 
 With longer paths the advantage increases.
 
-## Memory usage
+### Memory usage
 
 For most purposes `jsonpath-faster` will be a drop in replacement for
 `jsonpath` however it does cache one or more implementation functions
 for each path it sees so in cases where there are large number of distinct
 paths there could be a lot of cached generated code.
+
+### Compatibilty
+
+In addition to its own test suite `jsonpath-faster` passes all of `jsonpath`'s
+tests. Script and filter expressions are sanitised differently. In general
+`jsonpath-faster` is slightly more restrictive in what it will allow (no
+function calls for example).
 
 ## Query Example
 
@@ -254,8 +261,6 @@ var pathExpression = jp.stringify(['$', 'store', 'book', 0, 'author']);
 
 ## Differences from jsonpath
 
-`jsonpath-faster` is highly compatible with `jsonpath`. In addition to its own
-comprehensive tests it passes `jsonpath`'s test suite.
 
 #### Evaluating Script Expressions
 
@@ -283,7 +288,8 @@ just plain wrong (e.g. `[` => `$`).
 
 #### Other Minor Differences
 
-As a result of using a real parser and static evaluation, there are some arguable bugs in the original library that have not been carried through here:
+As a result of using a real parser and static evaluation, there are some
+arguable bugs in the original library that have not been carried through here:
 
 - strings in subscripts may now be double-quoted
 - final `step` arguments in slice operators may now be negative
