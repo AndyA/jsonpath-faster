@@ -102,15 +102,12 @@ async function tapify(inFile, outFile, pathPrefix) {
 }
 
 (async () => {
+  const root = "node_modules/jsonpath/test";
   try {
-    const tests = await fg("jsonpath-test/**");
+    const tests = await fg(`${root}/**`);
 
     for (const test of tests) {
-      const tap = path.join(
-        "test",
-        "upstream",
-        path.relative("jsonpath-test", test)
-      );
+      const tap = path.join("test", "upstream", path.relative(root, test));
 
       if (/\.js$/.test(test)) {
         console.log(`Converting ${test} to ${tap}`);
