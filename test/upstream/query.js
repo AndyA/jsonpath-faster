@@ -410,7 +410,7 @@ tap.test("query", async function() {
       }
     ]);
   });
-  tap.todo("leading member component", async function() {
+  tap.test("leading member component", async function() {
     var results = jp.nodes(data, "store");
     tap.same(results, [
       {

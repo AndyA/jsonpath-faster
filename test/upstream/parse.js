@@ -434,7 +434,7 @@ tap.test("parse-negative", async function() {
       var path = jp.parse("()");
     }, /Unrecognized text/);
   });
-  tap.todo("first time friendly error", async function() {
+  tap.test("first time friendly error", async function() {
     tap.throws(function() {
       new jp.JSONPath().parse("$...");
     }, /Expecting 'STAR'/);

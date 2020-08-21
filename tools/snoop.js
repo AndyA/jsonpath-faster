@@ -6,8 +6,8 @@ const Benchmark = require("benchmark");
 
 const { js, inspect } = require("../lib/util");
 
-const getWorkers = require("./lib/worker");
-const spec = require("./spec");
+const getWorkers = require("../benchmark/lib/worker");
+const spec = require("../benchmark/spec");
 
 const things = ["jsonpath", "baseline", "HEAD"];
 
@@ -33,7 +33,7 @@ async function snoop(what, jpath, method, count, opt) {
   for (const worker of workers) {
     if (!opt.has("s")) {
       if (worker.dir) {
-        const engine = require(path.join("..", worker.dir, "lib/engine"));
+        const engine = worker.jp.compiler;
         const Cache = require(path.join("..", worker.dir, "lib/compat/cache"));
 
         const snoopEngine = {

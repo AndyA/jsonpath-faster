@@ -1,8 +1,6 @@
 "use strict";
 
 const tap = require("tap");
-const engine = require("../lib/engine");
-const genfun = require("generate-function");
 const jp = require("jsonpath");
 const jpc = require("..");
 
