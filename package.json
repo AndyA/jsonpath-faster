@@ -6,7 +6,7 @@
   "scripts": {
     "test": "tap test",
     "tdd": "tap -w test",
-    "upstream-test": "mocha -u tdd --reporter tap --reporter-option tapVersion=13 jsonpath-test"
+    "tapify": "node tools/tapify.js"
   },
   "repository": {
     "type": "git",
