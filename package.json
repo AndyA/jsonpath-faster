@@ -1,7 +1,7 @@
 {
   "name": "jsonpath-faster",
   "version": "0.0.1",
-  "description": "A jsonpath implementation that compiles to javascript.",
+  "description": "Query JavaScript objects with JSONPath expressions. Compiles and caches JSONpath to JS",
   "main": "index.js",
   "scripts": {
     "test": "tap test",
@@ -13,7 +13,14 @@
     "url": "git+https://github.com/AndyA/jsonpath-faster.git"
   },
   "keywords": [
-    "jsonpath"
+    "JSONPath",
+    "jsonpath",
+    "json-path",
+    "object",
+    "traversal",
+    "json",
+    "path",
+    "data structures"
   ],
   "author": "Andy Armstrong <andy@hexten.net>",
   "license": "ISC",
@@ -26,8 +33,7 @@
     "esprima": "^4.0.1",
     "estraverse": "^5.2.0",
     "generate-function": "^2.3.1",
-    "jsonpath": "^1.0.2",
-    "prettier": "^2.0.5"
+    "jsonpath": "^1.0.2"
   },
   "devDependencies": {
     "benchmark": "^2.1.4",
@@ -38,6 +44,7 @@
     "mkdirp": "^1.0.4",
     "mocha": "^8.1.1",
     "platform": "^1.3.6",
+    "prettier": "^2.0.5",
     "simple-git": "^2.18.0",
     "tap": "^14.10.8"
   }
