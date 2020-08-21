@@ -4,7 +4,7 @@ Query JavaScript objects with JSONPath expressions. A faster compiling / cached 
 
 ## Compiled JSONPaths
 
-This module is designed (and tested) to be 100% compatible with
+This module is designed (and tested) to be highly compatible with
 [jsonpath](https://www.npmjs.com/package/jsonpath).
 
 It compiles JSONpath expressions into the corresponding Javascript and caches
@@ -52,9 +52,11 @@ paths there could be a lot of cached generated code.
 ### Compatibilty
 
 In addition to its own test suite `jsonpath-faster` passes all of `jsonpath`'s
-tests. Script and filter expressions are sanitised differently. In general
-`jsonpath-faster` is slightly more restrictive in what it will allow (no
-function calls for example).
+tests. 
+
+The main known difference is that script and filter expressions are sanitised
+differently. In general `jsonpath-faster` is slightly more restrictive in what
+it will allow (no function calls for example).
 
 ## Query Example
 
@@ -258,9 +260,6 @@ components as returned by `jp.parse`.
 var pathExpression = jp.stringify(['$', 'store', 'book', 0, 'author']);
 // "$.store.book[0].author"
 ```
-
-## Differences from jsonpath
-
 
 #### Evaluating Script Expressions
 

@@ -23,7 +23,7 @@
     "data structures"
   ],
   "author": "Andy Armstrong <andy@hexten.net>",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/AndyA/jsonpath-faster/issues"
   },
