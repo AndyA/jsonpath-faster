@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "tap test",
-    "tdd": "tap -w test"
+    "tdd": "tap -w test",
+    "upstream-test": "mocha -u tdd --reporter tap --reporter-option tapVersion=13 jsonpath-test"
   },
   "repository": {
     "type": "git",
@@ -34,6 +35,7 @@
     "del": "^5.1.0",
     "microtime": "^3.0.0",
     "mkdirp": "^1.0.4",
+    "mocha": "^8.1.1",
     "platform": "^1.3.6",
     "simple-git": "^2.18.0",
     "tap": "^14.10.8"
