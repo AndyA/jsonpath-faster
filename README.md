@@ -54,9 +54,14 @@ paths there could be a lot of cached generated code.
 In addition to its own test suite `jsonpath-faster` passes all of `jsonpath`'s
 tests. 
 
-The main known difference is that script and filter expressions are sanitised
-differently. In general `jsonpath-faster` is slightly more restrictive in what
+There are two known differences:
+
+Script and filter expressions are sanitised differently. In general
+`jsonpath-faster` is slightly more restrictive in what
 it will allow (no function calls for example).
+
+Vivification is handled differently. `jsonpath-faster` will only vivify
+portions of the JSONPath that occur after any wildcards or selectors.
 
 ## Query Example
 
