@@ -7,11 +7,11 @@ const selectorCompiler = require("./lib/compilers/selectors");
 const callbackCompiler = require("./lib/compilers/callback");
 const lib = require("./lib/compilers/lib");
 
-const engine = new Compiler(callbackCompiler, selectorCompiler, lib);
+const compiler = new Compiler(callbackCompiler, selectorCompiler, lib);
 
 class JSONPath extends Cache {
   constructor() {
-    super(engine);
+    super(compiler);
   }
 }
 
