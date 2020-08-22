@@ -6,8 +6,8 @@ const { bindScript, bindFilter } = require("../lib/scripts");
 
 const js = obj => JSON.stringify(obj);
 
-const runExpr = (expr, lval) =>
-  genfun()(`lval => ${bindScript(expr, "lval")}`).toFunction()(lval);
+const runExpr = (expr, lval, $) =>
+  genfun()(`(lval, $) => ${bindScript(expr, "lval")}`).toFunction()(lval, $);
 
 const positive = [
   { expr: "@.length-1", cases: [{ lval: [1, 2, 3], want: 2 }] },
@@ -48,21 +48,33 @@ const positive = [
       { lval: { sel: "c", a: "A", b: "B" }, want: undefined },
       { lval: { sel: "sel", a: "A", b: "B" }, want: "sel" }
     ]
+  },
+  {
+    expr: "@[$.sel]",
+    cases: [
+      { lval: { a: "A", b: "B" }, $: { sel: "a" }, want: "A" },
+      { lval: { a: "A", b: "B" }, $: { sel: "b" }, want: "B" },
+      { lval: { a: "A", b: "B" }, $: { sel: "c" }, want: undefined }
+    ]
   }
   // Nice to have but beware the pathologies of REs.
   //  { expr: "/foo/.test(@.name)", cases: [{ lval: { name: "foo" }, want: true }] }
 ];
 
 for (const { expr, cases } of positive) {
-  for (const { lval, want } of cases) {
-    const got = runExpr(expr, lval);
-    tap.same(got, want, `${expr} @=${js(lval)} => ${js(want)}`);
+  for (const { lval, $, want } of cases) {
+    const got = runExpr(expr, lval, $);
+    tap.same(
+      got,
+      want,
+      `${expr} @=${js(lval)} ${$ && `$=${js($)}`}} => ${js(want)}`
+    );
   }
 }
 
-const tryExpr = (expr, lval) => {
+const tryExpr = (expr, lval, $) => {
   try {
-    return runExpr(expr, lval);
+    return runExpr(expr, lval, $);
   } catch (e) {
     //    console.error(e.message);
     throw e;
@@ -79,7 +91,8 @@ const negative = [
   { expr: "return", want: /illegal/i },
   { expr: 'throw new Error("Help!")', want: /bad node/i },
   { expr: "foo.@", want: /bad node/i },
-  { expr: "/foo/.test(@.name)", want: /bad node/i }
+  { expr: "/foo/.test(@.name)", want: /bad node/i },
+  { expr: "foo", want: /bad node/i }
 ];
 
 for (const { expr, want } of negative)

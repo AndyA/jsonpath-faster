@@ -46,7 +46,7 @@ async function snoop(what, jpath, method, count, opt) {
               }\n\n` +
                 `const ast = ${js(ast)};\n\n` +
                 `const ctx = ${js(ctx)};\n\n` +
-                `module.exports = function(obj, count, extra) { ${code} }`,
+                `module.exports = function(obj, count, extra, $) { ${code} }`,
               { filepath: "code.js" }
             );
             console.log(pretty);
