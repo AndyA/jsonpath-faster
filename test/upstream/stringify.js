@@ -1,3 +1,4 @@
+// automatically translated from node_modules/jsonpath/test/stringify.js
 const tap = require("tap");
 var assert = require("assert");
 var jp = require("../../");

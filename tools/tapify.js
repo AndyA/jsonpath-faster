@@ -98,7 +98,10 @@ async function tapify(inFile, outFile, pathPrefix) {
     filepath: outFile
   });
 
-  await writeFile(outFile, pretty);
+  await writeFile(
+    outFile,
+    [`// automatically translated from ${inFile}`, pretty].join("\n")
+  );
 }
 
 (async () => {
