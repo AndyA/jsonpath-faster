@@ -5,7 +5,9 @@ const prettier = require("prettier");
 const jp = require("..");
 const { inspect } = require("../lib/util");
 const { MultiPath } = require("../lib/multipath");
-const { obj, paths } = require("../benchmark/spec");
+const { obj } = require("../benchmark/spec");
+
+const paths = ["$.store", "$.store.bicycle"];
 
 const mp = new MultiPath();
 
@@ -14,7 +16,7 @@ for (const expr of paths)
     console.log(`${expr}, ${jp.stringify(path)}: ${value}`);
   });
 
-if (0) {
+if (1) {
   const code = mp.code();
   const pretty = prettier.format(`module.exports = ${code}`, {
     filepath: "code.js"
@@ -22,5 +24,5 @@ if (0) {
   console.log(pretty);
 }
 
-const fun = mp.compile();
-fun(obj);
+//const fun = mp.compile();
+//fun(obj);
