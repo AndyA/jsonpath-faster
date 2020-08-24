@@ -33,7 +33,8 @@
     "esprima": "^4.0.1",
     "estraverse": "^5.2.0",
     "generate-function": "^2.3.1",
-    "jsonpath": "^1.0.2"
+    "jsonpath": "^1.0.2",
+    "lodash": "^4.17.20"
   },
   "devDependencies": {
     "benchmark": "^2.1.4",
