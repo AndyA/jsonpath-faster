@@ -5,15 +5,22 @@ const prettier = require("prettier");
 const jp = require("..");
 const { inspect } = require("../lib/util");
 const { MultiPath } = require("../lib/multipath");
-
-const exprs = ["$.foo.bar", "$.foo.baz[0]", "$.foo.baz[1]", "$.foo..id"];
+const { obj, paths } = require("../benchmark/spec");
 
 const mp = new MultiPath();
 
-for (const expr of exprs)
-  mp.addAction(expr, ctx => `console.log(${JSON.stringify(expr)}, path);`);
+for (const expr of paths)
+  mp.addVisitor(expr, (value, path) => {
+    console.log(`${expr}, ${jp.stringify(path)}: ${value}`);
+  });
 
-const code = jp.compiler.compileTokens(mp.render(), { trackPath: true });
+if (0) {
+  const code = mp.code();
+  const pretty = prettier.format(`module.exports = ${code}`, {
+    filepath: "code.js"
+  });
+  console.log(pretty);
+}
 
-const pretty = prettier.format(code, { filepath: "code.js" });
-console.log(pretty);
+const fun = mp.compile();
+fun(obj);
