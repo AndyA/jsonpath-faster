@@ -38,8 +38,12 @@ async function snoop(what, jpath, method, count, opt) {
 
         const snoopEngine = {
           ...engine,
-          compileTokens(ast, ctx) {
-            const code = engine.compileTokens(ast, ctx);
+          compile(ast, ctx) {
+            // Support legacy compileTokens
+            const code = engine.compileTokens
+              ? engine.compileTokens(ast, ctx)
+              : engine.compile(ast, ctx);
+
             const pretty = prettier.format(
               `// ${worker.name} ${jpath} ${method} count: ${
                 count === undefined ? "∞" : count
