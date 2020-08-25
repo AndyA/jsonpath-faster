@@ -4,6 +4,7 @@ const tap = require("tap");
 const jp = require("..");
 
 const tests = [
+  // Positives
   {
     path: "$.name",
     value: "Smoo",
@@ -15,20 +16,52 @@ const tests = [
     want: { person: [undefined, { name: "Smoo" }] }
   },
   {
+    path: "$.person[(1-1)].name",
+    value: "Pizzo",
+    want: { person: [{ name: "Pizzo" }] }
+  },
+  {
+    path: '$[("rec")].person[(1-1)].name',
+    value: "Pizzo",
+    want: { rec: { person: [{ name: "Pizzo" }] } }
+  },
+  {
+    path: "$..id",
+    value: "Bob",
+    obj: {
+      vectors: [
+        { id: "Perkins", length: 3.2 },
+        { id: "Larynx", length: 2.3 }
+      ]
+    },
+    want: {
+      vectors: [
+        { id: "Bob", length: 3.2 },
+        { id: "Larynx", length: 2.3 }
+      ]
+    },
+    flags: { todo: true }
+  },
+  // Negatives
+  {
     path: "$.*.name",
     value: "Pizzo",
     want: {}
   },
   {
-    path: "$.person[(1-1)].name",
-    value: "Pizzo",
-    want: { person: [{ name: "Pizzo" }] },
-    obj: { person: [] }
+    path: "$.foo.*.id",
+    value: "Andy",
+    want: {}
+  },
+  {
+    path: "$.foo..id",
+    value: "Andy",
+    want: {}
   }
 ];
 
-for (const { path, value, want, obj } of tests) {
+for (const { path, value, want, obj, flags } of tests) {
   const t = obj || {};
   jp.value(t, path, value);
-  tap.same(t, want, path);
+  tap.same(t, want, flags || {}, path);
 }

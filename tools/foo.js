@@ -5,16 +5,14 @@ const prettier = require("prettier");
 
 const code = jp.compiler.compile(
   [
-    ...jp.parse("$.person[(1-1)].name"),
+    ...jp.parse("$..id"),
     {
       scope: "internal",
       operation: "terminal",
-      lastly: ctx => ""
+      lastly: ctx => `${ctx.lval()} = extra;`
     }
   ],
-  {
-    vivify: true
-  }
+  { vivify: true, counted: true }
 );
 
 const pretty = prettier.format(code, { filepath: "code.js" });
