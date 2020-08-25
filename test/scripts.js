@@ -97,3 +97,9 @@ const negative = [
 
 for (const { expr, want } of negative)
   tap.throws(() => tryExpr(expr, []), want, `"${expr}" throws ${want}`);
+
+tap.throws(
+  () => bindFilter("?("),
+  /parse filter/i,
+  `bindFilter() throws on bad input`
+);
