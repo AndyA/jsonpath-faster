@@ -18,10 +18,10 @@ tap.test(`conformance`, async () => {
   tap.same(got, want, `MultiPath`);
 });
 
-tap.test(`mutator`, async () => {
+tap.test(`MultiPath`, async () => {
   const obj = {
     page: {
-      body: {},
+      body: { title: "All about me!" },
       header: {
         links: [
           { url: "/", title: "home" },
@@ -33,7 +33,7 @@ tap.test(`mutator`, async () => {
 
   const want = {
     page: {
-      body: {},
+      body: { title: "$.page.body.title" },
       header: {
         links: [
           {
@@ -50,11 +50,39 @@ tap.test(`mutator`, async () => {
   };
 
   const mp = new MultiPath();
-  mp.addMutator("$..title", (value, path) => jp.stringify(path));
-  mp.addMutator(
-    "$..links[*].url",
-    (value, path) => "https://example.com" + value
-  );
+  const before = [],
+    after = [];
+
+  mp.addVisitor("$..title", (value, path) => before.push({ value, path }))
+    .addMutator("$..title", (value, path) => jp.stringify(path))
+    .addMutator(
+      "$..links[*].url",
+      (value, path) => "https://example.com" + value
+    )
+    .addVisitor("$..title", (value, path) => after.push({ value, path }));
+
   mp.compile()(obj);
+
   tap.same(obj, want, `mutated`);
+
+  const want2 = {
+    before: [
+      { value: "All about me!", path: ["$", "page", "body", "title"] },
+      { value: "home", path: ["$", "page", "header", "links", 0, "title"] },
+      { value: "about", path: ["$", "page", "header", "links", 1, "title"] }
+    ],
+    after: [
+      { value: "$.page.body.title", path: ["$", "page", "body", "title"] },
+      {
+        value: "$.page.header.links[0].title",
+        path: ["$", "page", "header", "links", 0, "title"]
+      },
+      {
+        value: "$.page.header.links[1].title",
+        path: ["$", "page", "header", "links", 1, "title"]
+      }
+    ]
+  };
+
+  tap.same({ before, after }, want2, `visit order preserved`);
 });
