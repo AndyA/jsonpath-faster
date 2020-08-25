@@ -3,9 +3,9 @@
 const jp = require("..");
 const prettier = require("prettier");
 
-//const path = "$..id";
+const path = "$..id";
 //const path = "$.foo[3].bar[1]";
-const path = "$.foo[($.idx)]";
+//const path = "$.foo[($.idx)]";
 
 const code = jp.compiler.compile(
   [

@@ -26,6 +26,12 @@ const tests = [
     want: { rec: { person: [{ name: "Pizzo" }] } }
   },
   {
+    path: "$..link.id",
+    value: "abc",
+    obj: { items: [{ link: { id: "xyz" } }, { link: { id: "def" } }] },
+    want: { items: [{ link: { id: "abc" } }, { link: { id: "def" } }] }
+  },
+  {
     path: "$..id",
     value: "Bob",
     obj: {
@@ -39,8 +45,7 @@ const tests = [
         { id: "Bob", length: 3.2 },
         { id: "Larynx", length: 2.3 }
       ]
-    },
-    flags: { todo: true }
+    }
   },
   // Negatives
   {
