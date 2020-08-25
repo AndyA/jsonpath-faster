@@ -5,7 +5,6 @@ const tap = require("tap");
 const _ = require("lodash");
 const jp = require("..");
 const { vivifyTokens } = require("../lib/compilers/vivifiers");
-const { inspect } = require("../lib/util");
 const { Nest } = require("../lib/multipath");
 
 const sets = [

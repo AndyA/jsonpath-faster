@@ -1,6 +1,6 @@
 "use strict";
 
-const { inspect } = require("../lib/util");
+const inspect = require("../lib/inspect");
 
 const jp = (strings, ...key) => {
   return {

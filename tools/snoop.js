@@ -4,7 +4,7 @@ const path = require("path");
 const prettier = require("prettier");
 const Benchmark = require("benchmark");
 
-const { js, inspect } = require("../lib/util");
+const { js } = require("../lib/util");
 
 const getWorkers = require("../benchmark/lib/worker");
 const spec = require("../benchmark/spec");

@@ -3,7 +3,7 @@
 const prettier = require("prettier");
 
 const jp = require("..");
-const { inspect } = require("../lib/util");
+const inspect = require("../lib/inspect");
 const { MultiPath } = require("../lib/multipath");
 const { obj } = require("../benchmark/spec");
 

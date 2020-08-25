@@ -3,7 +3,7 @@
 const _ = require("lodash");
 const jp = require("..");
 const { vivifyTokens } = require("../lib/compilers/vivifiers");
-const { inspect } = require("../lib/util");
+const inspect = require("../lib/inspect");
 const { Nest } = require("../lib/multipath");
 
 const sets = [

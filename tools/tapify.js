@@ -10,8 +10,6 @@ const estraverse = require("estraverse");
 const escodegen = require("escodegen");
 const prettier = require("prettier");
 
-const { json, inspect } = require("../lib/util");
-
 async function writeFile(outFile, data) {
   await mkdirp(path.dirname(outFile));
   const tmpFile = outFile + ".tmp";
@@ -52,7 +50,6 @@ async function tapify(inFile, outFile, pathPrefix) {
 
   const fixRequirePath = rp => rp.replace(/^\.\./, pathPrefix + "..");
 
-  //  console.log(json(ast));
   ast.body.unshift(makeAssignRequire("tap", "tap"));
 
   const tap = estraverse.replace(ast, {
