@@ -2,7 +2,7 @@
 
 const tap = require("tap");
 const genfun = require("generate-function");
-const { bindScript, bindFilter } = require("../lib/scripts");
+const { bindScript, bindFilter, mkIdent } = require("../lib/scripts");
 
 const js = obj => JSON.stringify(obj);
 
@@ -98,8 +98,17 @@ const negative = [
 for (const { expr, want } of negative)
   tap.throws(() => tryExpr(expr, []), want, `"${expr}" throws ${want}`);
 
-tap.throws(
-  () => bindFilter("?("),
-  /parse filter/i,
-  `bindFilter() throws on bad input`
-);
+tap.test(`mkIdent`, async () => {
+  const id1 = mkIdent();
+  tap.match(id1, /^[a-z]+$/, `standard ident`);
+  const id2 = mkIdent(30);
+  tap.equal(id2.length, 30, `longer idents`);
+});
+
+tap.test(`errors`, async () => {
+  tap.throws(
+    () => bindFilter("?("),
+    /parse filter/i,
+    `bindFilter() throws on bad input`
+  );
+});
