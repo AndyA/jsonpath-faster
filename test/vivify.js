@@ -21,6 +21,11 @@ const tests = [
     want: { person: [{ name: "Pizzo" }] }
   },
   {
+    path: '$.person[(1-1)][("id")].name',
+    value: "Pizzo",
+    want: { person: [{ id: { name: "Pizzo" } }] }
+  },
+  {
     path: '$[("rec")].person[(1-1)].name',
     value: "Pizzo",
     want: { rec: { person: [{ name: "Pizzo" }] } }
