@@ -8,6 +8,7 @@ const { parseSlice, renderSlice, makeSlice } = require("../lib/slicer");
 function runSlice(list, slice) {
   const ns = {};
   const ctx = {
+    opt: {},
     sym(...pfxs) {
       return pfxs.map(pfx => `${pfx}${(ns[pfx] = (ns[pfx] || 0) + 1)}`);
     }
