@@ -1,23 +1,25 @@
 "use strict";
 
+const _ = require("lodash");
 const jp = require("..");
-const prettier = require("prettier");
+const { vivifyTokens } = require("../lib/compilers/vivifiers");
+const { inspect } = require("../lib/util");
+const { Nest } = require("../lib/multipath");
 
-//const path = "$..id";
-const path = "$.foo[3].bar[1]";
-//const path = "$.foo[($.idx)]";
+const sets = [
+  "$..id",
+  "$.foo[3].bar[1]",
+  "$.foo[($.idx)]",
+  ["$.foo.bar", "$.foo.baz"]
+];
 
-const code = jp.compiler.compile(
-  [
-    ...jp.parse(path),
-    {
-      scope: "internal",
-      operation: "terminal",
-      lastly: ctx => `${ctx.lval()} = extra;`
-    }
-  ],
-  { vivify: true, counted: true }
-);
-
-const pretty = prettier.format(code, { filepath: "code.js" });
-console.log(pretty);
+for (const set of sets) {
+  const nest = new Nest();
+  const paths = _.castArray(set);
+  for (const path of paths) {
+    const ast = jp.parse(path);
+    nest.add(ast);
+  }
+  const viv = vivifyTokens(nest.render());
+  console.log(inspect({ paths, viv }));
+}
