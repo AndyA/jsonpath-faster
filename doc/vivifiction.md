@@ -18,3 +18,5 @@ Here's how it seems it should work:
 
 `$.credits[*].email`
 : Set email on the first element of the credits array (if it exists). Don't vivify credits.
+
+
