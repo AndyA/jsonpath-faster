@@ -371,5 +371,77 @@ module.exports = [
       },
     ],
   },
+  {
+    path: "$..1",
+    ast: [
+      { expression: { type: "root", value: "$" } },
+      {
+        expression: { type: "numeric_literal", value: 1 },
+        scope: "descendant",
+        operation: "member",
+      },
+    ],
+  },
+  {
+    path: "$..[?(@isbn)]",
+    ast: [
+      { expression: { type: "root", value: "$" } },
+      {
+        expression: { type: "filter_expression", value: "?(@isbn)" },
+        scope: "descendant",
+        operation: "subscript",
+      },
+    ],
+  },
+  {
+    path: "$..[::-1]",
+    ast: [
+      { expression: { type: "root", value: "$" } },
+      {
+        expression: { type: "slice", value: "::-1" },
+        scope: "descendant",
+        operation: "subscript",
+      },
+    ],
+  },
+  {
+    path: '$..["foo"]',
+    ast: [
+      { expression: { type: "root", value: "$" } },
+      {
+        expression: { type: "string_literal", value: "foo" },
+        scope: "descendant",
+        operation: "subscript",
+      },
+    ],
+  },
+  {
+    path: "$..[0,1]",
+    ast: [
+      { expression: { type: "root", value: "$" } },
+      {
+        expression: {
+          type: "union",
+          value: [
+            { expression: { type: "numeric_literal", value: 0 } },
+            { expression: { type: "numeric_literal", value: 1 } },
+          ],
+        },
+        scope: "descendant",
+        operation: "subscript",
+      },
+    ],
+  },
+  {
+    path: "$..[*]",
+    ast: [
+      { expression: { type: "root", value: "$" } },
+      {
+        expression: { type: "wildcard", value: "*" },
+        scope: "descendant",
+        operation: "subscript",
+      },
+    ],
+  },
 ];
 

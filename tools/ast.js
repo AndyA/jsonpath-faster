@@ -28,7 +28,14 @@ const paths = [
   '$..book[?(@.price<30 && @.category=="fiction")]', // Filter all fiction books cheaper than 30
 
   //  jsonpath can't handle this
-  "$..[(@.length-1)]" // All last elements
+  "$..[(@.length-1)]", // All last elements
+
+  "$..1",
+  "$..[?(@isbn)]",
+  "$..[::-1]",
+  '$..["foo"]',
+  "$..[0,1]",
+  "$..[*]"
 ];
 
 const stash = [];
