@@ -1,0 +1,61 @@
+"use strict";
+
+const tap = require("tap");
+const _ = require("lodash");
+
+const { makeTokenMatcher } = require("../lib/tokens");
+
+tap.formatSnapshot = obj => JSON.stringify(obj, null, 2);
+
+const data = [
+  { expression: { type: "root", value: "$" } },
+  {
+    expression: { type: "wildcard", value: "*" },
+    scope: "child",
+    operation: "member"
+  },
+  {
+    expression: { type: "wildcard", value: "*" },
+    scope: "descendant",
+    operation: "member"
+  },
+  {
+    expression: { type: "identifier", value: "store" },
+    scope: "child",
+    operation: "member"
+  },
+  {
+    expression: { type: "identifier", value: "bicycle" },
+    scope: "child",
+    operation: "member"
+  }
+];
+
+const tests = [
+  { name: "match all", when: {} },
+  { name: "root", when: { expression: { type: "root", value: "$" } } },
+  { name: "child member", when: { scope: "child", operation: "member" } },
+  {
+    name: "root or descendant",
+    when: [
+      { expression: { type: "root", value: "$" } },
+      { scope: "descendant" }
+    ]
+  },
+  {
+    name: "function",
+    when: tok => tok.expression.value === "*"
+  },
+  {
+    name: "functional property",
+    when: {
+      expression: { value: v => v === "*" }
+    }
+  }
+];
+
+for (const { name, when } of tests) {
+  const test = makeTokenMatcher(when);
+  const [included, excluded] = _.partition(data, test);
+  tap.matchSnapshot({ included, excluded }, name);
+}
