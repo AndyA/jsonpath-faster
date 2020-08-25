@@ -1,10 +1,26 @@
 "use strict";
 
-const { bindLastly } = require("../lib/lastly");
+function JSONPath() {
+  const self = function(template, ...args) {
+    return {
+      spill() {
+        return { template, args };
+      }
+    };
+  };
 
-const out = bindLastly("cb(@.value, @.path, @.pathString)", {
-  value: () => "obj.foo",
-  path: () => "stack.slice(0)",
-  pathString: () => "jp.stringify(@.path)"
-});
-console.log(out);
+  self.apply = function() {
+    console.log("Apply!");
+  };
+
+  return self;
+}
+
+const jp = new JSONPath();
+
+const i = 0,
+  j = 1;
+
+const x = jp`$.slot[${i}][${j}]`.spill();
+console.log(x);
+jp.apply();
