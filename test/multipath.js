@@ -94,7 +94,7 @@ tap.test(`MultiPath`, async () => {
 
     mp.addAction("$.foo.bar", `$.log.push([@.value, @.path]);`)
       .addAction("$.foo.baz", `$.log.push([@.value]);`)
-      .addAction("$.foo.bof[0].meta.control", `@.value = true`)
+      .addAction("$.foo.bof[0].meta.control", `@.value = true;`)
       .addAction("$..*", `$.survey.push([@.pathString, @.leaf]);`);
 
     const obj = { foo: { bar: "Bar!", baz: "Baz!" } };
