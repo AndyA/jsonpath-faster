@@ -1,38 +1,18 @@
 "use strict";
 
-const _ = require("lodash");
-const esprima = require("esprima");
-const estraverse = require("estraverse");
-const escodegen = require("escodegen");
-const inspect = require("../lib/inspect");
+const jp = require("..");
+const prettier = require("prettier");
 
-const ast = esprima.parse("foo.bar += 3");
-console.log(inspect(ast));
+const addTerminal = (path, lastly, ctx) =>
+  jp.compiler.compile(
+    [...jp.parse(path), { operation: "terminal", scope: "internal", lastly }],
+    ctx
+  );
 
-const stack = [];
-estraverse.traverse(ast, {
-  enter(node, parent) {
-    const isLHS = () => stack.length && _.last(stack);
-    const isParent = (type, key) =>
-      parent && parent.type === type && parent[key] === node;
-
-    const getSetting = () => {
-      if (isParent("AssignmentExpression", "left")) return true;
-      if (isParent("UpdateExpression", "argument")) return true;
-      if (stack.length && isParent("MemberExpression", "object"))
-        return _.last(stack);
-      return false;
-    };
-
-    stack.push(getSetting());
-
-    if (node.type === "Identifier" && node.name === "foo") {
-      console.log(isLHS());
-    }
-  },
-  leave(node, parent) {
-    stack.pop();
-  }
+const code = addTerminal("$.person[(1-1)].name", ctx => `@.value = "Pizzo";`, {
+  counted: true
 });
 
-//console.log(inspect(ast));
+const pretty = prettier.format(code, { filepath: "code.js" });
+
+console.log(pretty);
