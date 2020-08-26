@@ -17,6 +17,31 @@ tap.test(`bad AST`, async () => {
   );
 });
 
+const addTerminal = (path, lastly) => {
+  const ast = jp.parse(path);
+  return [...ast, { operation: "terminal", scope: "internal", lastly }];
+};
+
+tap.test(`read-only props`, async () => {
+  tap.throws(
+    () =>
+      jp.compiler.compile(
+        addTerminal("$.foo.bar", ctx => `@.path = []`),
+        {}
+      ),
+    /path.*read-only/i
+  );
+
+  tap.throws(
+    () =>
+      jp.compiler.compile(
+        addTerminal("$.foo.bar", ctx => `@.parent = []`),
+        {}
+      ),
+    /parent.*read-only/i
+  );
+});
+
 tap.test(`bad use`, async () => {
   const ctx = jp.compiler.makeContext({});
   tap.throws(() => ctx.use("flibble"), /in library/i, `bad use`);
