@@ -73,6 +73,66 @@ tap.test(`binding`, async () => {
   }
 });
 
+tap.test(`assign`, async () => {
+  const ids = {};
+  const ctx = {
+    sym(name) {
+      const next = (ids[name] = (ids[name] || 0) + 1);
+      return [name + next];
+    },
+
+    lval() {
+      return "obj";
+    }
+  };
+
+  const factory = bindFactory(ctx);
+
+  const makeContext = tracker => ({
+    value: lhs => {
+      tracker("value", lhs);
+      return { code: ctx.lval() };
+    },
+    path: lhs => {
+      if (lhs) throw new Error(`@.path is read-only`);
+      return factory("path", v => `var ${v} = stack.slice(0);`);
+    }
+  });
+
+  const tests = [
+    { code: `console.log(@.value)`, want: [["value", false]] },
+    { code: `@.value = "Hello"`, want: [["value", true]] },
+    { code: `@.value.x = []`, want: [["value", true]] },
+    {
+      code: `@.value = cook(@.value, @.path)`,
+      want: [
+        ["value", true],
+        ["value", false]
+      ]
+    },
+    { code: `scope[@.value] = true`, want: [["value", false]] },
+    { code: `@.value++`, want: [["value", true]] },
+    {
+      code: `@.value += @.value`,
+      want: [
+        ["value", true],
+        ["value", false]
+      ]
+    }
+  ];
+
+  for (const { code, want } of tests) {
+    const log = [];
+    const context = makeContext((...args) => log.push(args));
+    const expr = bindLastly(code, context);
+    tap.same(log, want, `assign? ${code}`);
+  }
+
+  // Check we can't assign to @.path
+  const context = makeContext(() => false);
+  tap.throws(() => bindLastly("@.path = []", context), /read-only/i);
+});
+
 tap.test(`negative`, async () => {
   tap.throws(
     () => bindLastly("@", {}),

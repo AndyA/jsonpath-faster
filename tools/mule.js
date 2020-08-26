@@ -1,22 +1,38 @@
 "use strict";
 
 const _ = require("lodash");
-const { bindFactory, bindLastly } = require("../lib/lastly");
+const esprima = require("esprima");
+const estraverse = require("estraverse");
+const escodegen = require("escodegen");
+const inspect = require("../lib/inspect");
 
-const compileLastly = code => {
-  const factory = bindFactory();
-  const ctx = {
-    path: () => factory("path", v => `var ${v} = stack.slice(0);`),
-    pathString: () =>
-      factory("pathString", v => `var ${v} = jp.stringify(@.path)`)
-  };
+const ast = esprima.parse("foo.bar += 3");
+console.log(inspect(ast));
 
-  const expr = bindLastly(code, ctx);
-  return expr;
-};
+const stack = [];
+estraverse.traverse(ast, {
+  enter(node, parent) {
+    const isLHS = () => stack.length && _.last(stack);
+    const isParent = (type, key) =>
+      parent && parent.type === type && parent[key] === node;
 
-const expr = compileLastly(
-  "if (@.pathString.length > 3) console.log(`Long ${@.pathString}`);"
-);
+    const getSetting = () => {
+      if (isParent("AssignmentExpression", "left")) return true;
+      if (isParent("UpdateExpression", "argument")) return true;
+      if (stack.length && isParent("MemberExpression", "object"))
+        return _.last(stack);
+      return false;
+    };
 
-console.log(expr);
+    stack.push(getSetting());
+
+    if (node.type === "Identifier" && node.name === "foo") {
+      console.log(isLHS());
+    }
+  },
+  leave(node, parent) {
+    stack.pop();
+  }
+});
+
+//console.log(inspect(ast));
