@@ -118,6 +118,23 @@ tap.test(`assign`, async () => {
         ["value", true],
         ["value", false]
       ]
+    },
+    {
+      code: `if (@.value < 0) @.value = 0`,
+      want: [
+        ["value", false],
+        ["value", true]
+      ]
+    },
+    {
+      // Fairly improbable
+      code: `for (@.value = 0; @.value < 10; @.value++) console.log(@.value)`,
+      want: [
+        ["value", true],
+        ["value", false],
+        ["value", true],
+        ["value", false]
+      ]
     }
   ];
 
