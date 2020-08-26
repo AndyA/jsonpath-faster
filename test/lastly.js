@@ -4,7 +4,6 @@ const tap = require("tap");
 const { bindFactory, bindLastly } = require("../lib/lastly");
 
 const getCode = expr => {
-  console.log(`getCode:`, expr);
   return [expr.pre, expr.code, expr.post].filter(c => c && c.length).join("\n");
 };
 

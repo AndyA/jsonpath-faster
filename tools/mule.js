@@ -5,6 +5,21 @@ const jp = require("..");
 const prettier = require("prettier");
 const { makeTerminal } = require("../lib/tokens");
 const { MultiPath } = require("../lib/multipath");
+const { makeTree } = require("../lib/merge");
+
+const flattenTree = tree => {
+  const flatten = (tree, cb, ...path) => {
+    if (!tree || tree.length === 0) return cb(path);
+    for (const node of tree) {
+      if (node.tok.scope === "internal") flatten([], cb, ...path);
+      else flatten(node.next, cb, ...path, node.tok);
+    }
+  };
+
+  const out = [];
+  flatten(makeTree(tree), path => out.push(path));
+  return out;
+};
 
 if (1) {
   const obj = require("../test/upstream/data/store");
@@ -21,11 +36,14 @@ if (1) {
       got.push({ testPath, path: jp.stringify(path), value })
     );
   }
-  const code = mp.code();
-  const pretty = prettier.format(`module.exports = ${code}`, {
-    filepath: "code.js"
-  });
-  console.log(pretty);
+  console.log(inspect(mp.tree));
+  //  const flat = flattenTree(mp.tree).map(jp.stringify);
+  //  console.log(flat);
+  //  const code = mp.code();
+  //  const pretty = prettier.format(`module.exports = ${code}`, {
+  //    filepath: "code.js"
+  //  });
+  //  console.log(pretty);
   //  mp.compile()(obj);
   //  console.log(JSON.stringify({ got, want }, null, 2));
 }

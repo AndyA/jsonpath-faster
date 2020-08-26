@@ -4,7 +4,7 @@ const tap = require("tap");
 const jp = require("..");
 const { MultiPath } = require("../lib/multipath");
 
-tap.skip(`conformance`, async () => {
+tap.test(`conformance`, async () => {
   const obj = require("./upstream/data/store");
   const paths = require("./data/paths");
 
