@@ -17,13 +17,11 @@ tap.test(`bad AST`, async () => {
   );
 });
 
-const addTerminal = (path, lastly, ctx) => {
-  const ast = jp.parse(path);
-  return jp.compiler.compile(
-    [...ast, { operation: "terminal", scope: "internal", lastly }],
+const addTerminal = (path, lastly, ctx) =>
+  jp.compiler.compile(
+    [...jp.parse(path), { operation: "terminal", scope: "internal", lastly }],
     ctx
   );
-};
 
 tap.test(`read-only props`, async () => {
   tap.throws(
