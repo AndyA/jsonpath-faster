@@ -9,7 +9,7 @@ const addTerminal = (path, lastly, ctx) =>
     ctx
   );
 
-const code = addTerminal("$.person[(1-1)].name", ctx => `@.value = "Pizzo";`, {
+const code = addTerminal("$.person[(1-1)].name", ctx => `cb(@.value);`, {
   counted: true
 });
 
