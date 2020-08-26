@@ -3,19 +3,28 @@
 const tap = require("tap");
 const { bindFactory, bindLastly } = require("../lib/lastly");
 
+const getCode = expr => {
+  console.log(`getCode:`, expr);
+  return [expr.pre, expr.code, expr.post].filter(c => c && c.length).join("\n");
+};
+
 tap.test(`recursive`, async () => {
-  const expr = bindLastly("@.pathString", {
-    path: () => ({ code: "path" }),
-    pathString: () => ({ code: "jp.stringify(@.path)" })
-  });
+  const expr = getCode(
+    bindLastly("@.pathString", {
+      path: () => ({ code: "path" }),
+      pathString: () => ({ code: "jp.stringify(@.path)" })
+    })
+  );
   tap.equals(expr, "jp.stringify(path);", `recursive resolution`);
 });
 
 tap.test(`syntax`, async () => {
-  const expr = bindLastly("@.pathString.length", {
-    path: () => ({ code: "path" }),
-    pathString: () => ({ code: "jp.stringify(@.path)" })
-  });
+  const expr = getCode(
+    bindLastly("@.pathString.length", {
+      path: () => ({ code: "path" }),
+      pathString: () => ({ code: "jp.stringify(@.path)" })
+    })
+  );
   tap.equals(expr, "jp.stringify(path).length;", `syntax`);
 });
 
@@ -51,7 +60,7 @@ tap.test(`binding`, async () => {
 
   // vim thinks a bare brace is an object literal
   if (1) {
-    const expr = bindLastly("@.tracer; @.tracer; @.tracer;", context);
+    const expr = getCode(bindLastly("@.tracer; @.tracer; @.tracer;", context));
     const got = expr.match(/\w+\s+tracer\d+/g);
     const want = [
       "init tracer1",
@@ -68,7 +77,7 @@ tap.test(`binding`, async () => {
   }
 
   if (1) {
-    const expr = bindLastly("callback(@.path, @.path);", context);
+    const expr = getCode(bindLastly("callback(@.path, @.path);", context));
     tap.same(expr.match(/\bslice\b/g), ["slice"], `stack eval only once`);
   }
 });
@@ -141,7 +150,7 @@ tap.test(`assign`, async () => {
   for (const { code, want } of tests) {
     const log = [];
     const context = makeContext((...args) => log.push(args));
-    const expr = bindLastly(code, context);
+    const expr = getCode(bindLastly(code, context));
     tap.same(log, want, `assign? ${code}`);
   }
 
