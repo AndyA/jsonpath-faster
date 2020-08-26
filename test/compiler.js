@@ -34,7 +34,7 @@ const fun = (path, lastly, ctx) => {
 };
 
 tap.test(`read-only props`, async () => {
-  const props = ["path", "parent", "pathString"];
+  const props = ["path", "pathString"];
   for (const ro of props) {
     tap.throws(
       () => addTerminal("$.foo.bar", ctx => `@.${ro} = []`, {}),
