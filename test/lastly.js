@@ -19,15 +19,6 @@ tap.test(`syntax`, async () => {
   tap.equals(expr, "jp.stringify(path).length;", `syntax`);
 });
 
-const extractTracer = code => {
-  const out = [];
-  for (const line of code.split(/\n/)) {
-    const m = line.match(/(\w+\s+tracer\d+)/);
-    if (m) out.push(m[1]);
-  }
-  return out;
-};
-
 tap.test(`binding`, async () => {
   const ids = {};
   const ctx = {
@@ -61,7 +52,7 @@ tap.test(`binding`, async () => {
   // vim thinks a bare brace is an object literal
   if (1) {
     const expr = bindLastly("@.tracer; @.tracer; @.tracer;", context);
-    const got = extractTracer(expr);
+    const got = expr.match(/\w+\s+tracer\d+/g);
     const want = [
       "init tracer1",
       "init tracer2",
