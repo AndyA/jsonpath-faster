@@ -146,8 +146,8 @@ tap.test(`Nest`, async () => {
       ["$", "b", "c", 2]
     ];
 
-    tap.same(leafLog, leafWant, `leaf limitter`);
-    tap.same(allLog, allWant, `leaf limitter - chains original`);
+    tap.same(leafLog, leafWant, `leaf limiter`);
+    tap.same(allLog, allWant, `leaf limiter - chains original`);
   });
 
   tap.test(`Natural ordering`, async () => {
