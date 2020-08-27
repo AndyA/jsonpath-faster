@@ -7,9 +7,8 @@ const selectorCompiler = require("./lib/compilers/selectors");
 const callbackCompiler = require("./lib/compilers/callback");
 const lib = require("./lib/compilers/lib");
 
-const compiler = new Compiler(callbackCompiler, selectorCompiler, lib);
-
 function JSONPath() {
+  const compiler = new Compiler(callbackCompiler, selectorCompiler, lib);
   const cache = new Cache(compiler);
 
   const jp = (parts, ...$) => {
