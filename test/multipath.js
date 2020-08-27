@@ -2,14 +2,13 @@
 
 const tap = require("tap");
 const jp = require("..");
-const { MultiPath } = require("../lib/multipath");
 
 tap.test(`conformance`, async () => {
   const obj = require("./upstream/data/store");
   const paths = require("./data/paths");
 
   const want = paths.flatMap(path => jp.nodes(obj, path));
-  const mp = new MultiPath();
+  const mp = jp.nest();
   const got = [];
   for (const path of paths)
     mp.addVisitor(path, (value, path) => got.push({ value, path }));
@@ -51,7 +50,7 @@ tap.test(`MultiPath`, async () => {
       i: { was: { here: true } }
     };
 
-    const mp = new MultiPath();
+    const mp = jp.nest();
     const before = [],
       after = [];
 
@@ -93,7 +92,7 @@ tap.test(`MultiPath`, async () => {
   });
 
   tap.test(`Actions`, async () => {
-    const mp = new MultiPath();
+    const mp = jp.nest();
 
     mp.addAction("$.foo.bar", `$.log.push([@.value, @.path]);`)
       .addAction("$.foo.baz", `$.log.push([@.value]);`)
@@ -122,7 +121,7 @@ tap.test(`MultiPath`, async () => {
   });
 
   tap.test(`Misc`, async () => {
-    const mp = new MultiPath().addSetter("$", {
+    const mp = jp.nest().addSetter("$", {
       empty: false
     });
     const obj = mp.compile()(undefined);

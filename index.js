@@ -11,6 +11,8 @@ function JSONPath() {
   const compiler = new Compiler(callbackCompiler, selectorCompiler, lib);
   const cache = new Cache(compiler);
 
+  // Handle tagged template literals
+  //  jp`$.foo[${x}]`.value(obj, true)
   const jp = (parts, ...$) => {
     let idx = 0;
     const path = parts.reduce((a, b) => `${a}($[${idx++}])${b}`);
@@ -24,7 +26,12 @@ function JSONPath() {
     };
   };
 
-  return Object.assign(jp, { JSONPath }, cache);
+  return Object.assign(jp, { JSONPath }, cache, {
+    nest() {
+      const { MultiPath } = require("./lib/multipath");
+      return new MultiPath();
+    }
+  });
 }
 
 module.exports = new JSONPath();

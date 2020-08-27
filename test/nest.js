@@ -2,10 +2,9 @@
 
 const tap = require("tap");
 const jp = require("..");
-const { MultiPath } = require("../lib/multipath");
 const { makeTerminal } = require("../lib/tokens");
 
-const nest = new MultiPath();
+const nest = jp.nest();
 const paths = ["$.foo.bar", "$.foo.baz"];
 const obj = { foo: { bar: "Hello", baz: "Bye!" } };
 

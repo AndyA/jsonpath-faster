@@ -5,7 +5,6 @@ const tap = require("tap");
 const _ = require("lodash");
 const jp = require("..");
 const { vivifyTokens } = require("../lib/compilers/vivifiers");
-const { MultiPath } = require("../lib/multipath");
 
 const sets = [
   "$..id",
@@ -18,7 +17,7 @@ const sets = [
 
 tap.formatSnapshot = obj => JSON.stringify(obj, null, 2);
 for (const set of sets) {
-  const nest = new MultiPath();
+  const nest = jp.nest();
   const paths = _.castArray(set);
   const name = paths.join(", ");
 
