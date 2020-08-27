@@ -47,7 +47,8 @@ tap.test(`MultiPath`, async () => {
             }
           ]
         }
-      }
+      },
+      i: { was: { here: true } }
     };
 
     const mp = new MultiPath();
@@ -60,7 +61,9 @@ tap.test(`MultiPath`, async () => {
         "$..links[*].url",
         (value, path) => "https://example.com" + value
       )
-      .addVisitor("$..title", (value, path) => after.push({ value, path }));
+      .addVisitor("$..title", (value, path) => after.push({ value, path }))
+      .addMutator("$.they.were.here", () => false) // NOP - path !exists
+      .addSetter("$.i.was.here", () => true); // vivify
 
     const $ = {};
     mp.compile()(obj, $);
