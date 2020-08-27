@@ -12,8 +12,8 @@ tap.test(`conformance`, async () => {
   const mp = jp.nest();
   const got = [];
   for (const path of paths)
-    mp.addVisitor(path, (value, path) => got.push({ value, path }));
-  mp.compile()(obj);
+    mp.visitor(path, (value, path) => got.push({ value, path }));
+  mp(obj);
 
   tap.same(got, want, `Nest`);
 });
@@ -55,18 +55,18 @@ tap.test(`Nest`, async () => {
     const before = [],
       after = [];
 
-    mp.addVisitor("$..title", (value, path) => before.push({ value, path }))
-      .addMutator("$..title", (value, path) => jp.stringify(path))
-      .addMutator(
+    mp.visitor("$..title", (value, path) => before.push({ value, path }))
+      .mutator("$..title", (value, path) => jp.stringify(path))
+      .mutator(
         "$..links[*].url",
         (value, path) => "https://example.com" + value
       )
-      .addVisitor("$..title", (value, path) => after.push({ value, path }))
-      .addMutator("$.they.were.here", false) // NOP - path !exists
-      .addSetter("$.i.was.here", true); // vivify
+      .visitor("$..title", (value, path) => after.push({ value, path }))
+      .mutator("$.they.were.here", false) // NOP - path !exists
+      .setter("$.i.was.here", true); // vivify
 
     const $ = {};
-    mp.compile()(obj, $);
+    mp(obj, $);
 
     tap.same(obj, want, `mutated`);
 
@@ -95,14 +95,14 @@ tap.test(`Nest`, async () => {
   tap.test(`Actions`, async () => {
     const mp = jp.nest();
 
-    mp.addAction("$.foo.bar", `$.log.push([@.value, @.path]);`)
-      .addAction("$.foo.baz", `$.log.push([@.value]);`)
-      .addAction("$.foo.bof[0].meta.control", `@.value = true;`)
-      .addAction("$..*", `$.survey.push([@.pathString, @.leaf]);`);
+    mp.at("$.foo.bar", `$.log.push([@.value, @.path]);`)
+      .at("$.foo.baz", `$.log.push([@.value]);`)
+      .at("$.foo.bof[0].meta.control", `@.value = true;`)
+      .at("$..*", `$.survey.push([@.pathString, @.leaf]);`);
 
     const obj = { foo: { bar: "Bar!", baz: "Baz!" } };
     const $ = { log: [], survey: [] };
-    mp.compile()(obj, $);
+    mp(obj, $);
 
     const want = {
       obj: {
@@ -118,7 +118,7 @@ tap.test(`Nest`, async () => {
         ]
       }
     };
-    tap.same({ obj, $ }, want, `addAction`);
+    tap.same({ obj, $ }, want, `at`);
   });
 
   tap.test(`Natural ordering`, async () => {
@@ -136,7 +136,7 @@ tap.test(`Nest`, async () => {
     }
 
     const $ = { log: [] };
-    nest.compile()(obj, $);
+    nest(obj, $);
     const want = {
       log: [
         ["Hello", "$.foo.bar"],
@@ -148,10 +148,10 @@ tap.test(`Nest`, async () => {
   });
 
   tap.test(`Misc`, async () => {
-    const mp = jp.nest().addSetter("$", {
+    const mp = jp.nest().setter("$", {
       empty: false
     });
-    const obj = mp.compile()(undefined);
+    const obj = mp(undefined);
     tap.same(obj, { empty: false }, `vivify root object`);
   });
 });
