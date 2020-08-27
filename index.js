@@ -9,13 +9,11 @@ const lib = require("./lib/compilers/lib");
 
 const compiler = new Compiler(callbackCompiler, selectorCompiler, lib);
 
-class JSONPath extends Cache {
-  constructor() {
-    super(compiler);
-  }
+function JSONPath() {
+  const cache = new Cache(compiler);
+  const jp = (strings, ...key) => {};
+
+  return Object.assign(jp, { JSONPath }, cache);
 }
 
-const jp = new JSONPath();
-jp.JSONPath = JSONPath;
-
-module.exports = jp;
+module.exports = new JSONPath();

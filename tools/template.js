@@ -2,20 +2,34 @@
 
 const inspect = require("../lib/inspect");
 
-const jp = (strings, ...key) => {
-  return {
-    nodes(...args) {
-      return { strings, key, args };
+const Compiler = require("../lib/compiler");
+const Cache = require("../lib/compat/cache");
+
+const selectorCompiler = require("../lib/compilers/selectors");
+const callbackCompiler = require("../lib/compilers/callback");
+const lib = require("../lib/compilers/lib");
+
+const compiler = new Compiler(callbackCompiler, selectorCompiler, lib);
+
+function JSONPath() {
+  const cache = new Cache(compiler);
+  const jp = (...args) => jp._template(...args);
+
+  return Object.assign(jp, { JSONPath }, cache, {
+    _template(strings, ...key) {
+      console.log(inspect({ strings, key }));
     }
-  };
-};
+  });
+}
 
-const i = 12;
-const j = 3;
-const obj = {};
-const x = jp`$.names[${i}][${j}]..id`.nodes(obj);
+const jp = new JSONPath();
+const obj = { foo: [1, 2, 3] };
+console.log(jp.nodes(obj, "$..*"));
+const i = 1;
+jp`$.names[${i}]`;
 
-console.log(inspect(x));
+const jj = new jp.JSONPath();
+jj`$.foo`;
 
 process.exit(1);
 
