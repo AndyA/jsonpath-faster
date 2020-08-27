@@ -24,7 +24,7 @@ for (const set of sets) {
 
   for (const path of paths) {
     const ast = jp.parse(path);
-    nest.add(ast);
+    nest.addTree(ast);
   }
 
   const viv = vivifyTokens(nest.render());

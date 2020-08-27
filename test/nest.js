@@ -11,7 +11,7 @@ const obj = { foo: { bar: "Hello", baz: "Bye!" } };
 
 for (const path of paths) {
   const ast = jp.parse(path);
-  nest.add([...ast, makeTerminal(`$.log.push([@.value, @.pathString])`)]);
+  nest.addTree([...ast, makeTerminal(`$.log.push([@.value, @.pathString])`)]);
 }
 
 const $ = { log: [] };
