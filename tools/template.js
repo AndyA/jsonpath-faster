@@ -5,6 +5,10 @@ const inspect = require("../lib/inspect");
 
 const jp = require("..");
 
+jp.compiler.on("compile", info => {
+  console.log(inspect(info));
+});
+
 const obj = [];
 
 for (let x = 0; x < 3; x++) {
