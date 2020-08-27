@@ -2,6 +2,7 @@
 
 const tap = require("tap");
 const jp = require("..");
+const { makeTerminal } = require("../lib/tokens");
 
 tap.test(`conformance`, async () => {
   const obj = require("./upstream/data/store");
@@ -118,6 +119,32 @@ tap.test(`MultiPath`, async () => {
       }
     };
     tap.same({ obj, $ }, want, `addAction`);
+  });
+
+  tap.test(`Natural ordering`, async () => {
+    tap.pass("OK!");
+    const nest = jp.nest();
+    const paths = ["$.foo.bar", "$.foo.baz"];
+    const obj = { foo: { bar: "Hello", baz: "Bye!" } };
+
+    for (const path of paths) {
+      const ast = jp.parse(path);
+      nest.addTree([
+        ...ast,
+        makeTerminal(`$.log.push([@.value, @.pathString])`)
+      ]);
+    }
+
+    const $ = { log: [] };
+    nest.compile()(obj, $);
+    const want = {
+      log: [
+        ["Hello", "$.foo.bar"],
+        ["Bye!", "$.foo.baz"]
+      ]
+    };
+
+    tap.same($, want, `natural ordering of MultiPath`);
   });
 
   tap.test(`Misc`, async () => {

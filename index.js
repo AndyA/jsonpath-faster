@@ -29,7 +29,7 @@ function JSONPath() {
   return Object.assign(jp, { JSONPath }, cache, {
     nest() {
       const { MultiPath } = require("./lib/multipath");
-      return new MultiPath();
+      return new MultiPath(this);
     }
   });
 }
