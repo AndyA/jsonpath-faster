@@ -120,4 +120,12 @@ tap.test(`MultiPath`, async () => {
     };
     tap.same({ obj, $ }, want, `addAction`);
   });
+
+  tap.test(`Misc`, async () => {
+    const mp = new MultiPath().addSetter("$", () => ({
+      empty: false
+    }));
+    const obj = mp.compile()(undefined);
+    tap.same(obj, { empty: false }, `vivify root object`);
+  });
 });
