@@ -57,10 +57,7 @@ tap.test(`Nest`, async () => {
 
     mp.visitor("$..title", (value, path) => before.push({ value, path }))
       .mutator("$..title", (value, path) => jp.stringify(path))
-      .mutator(
-        "$..links[*].url",
-        (value, path) => "https://example.com" + value
-      )
+      .mutator("$..links[*].url", value => "https://example.com" + value)
       .visitor("$..title", (value, path) => after.push({ value, path }))
       .mutator("$.they.were.here", false) // NOP - path !exists
       .setter("$.i.was.here", true); // vivify
@@ -121,8 +118,39 @@ tap.test(`Nest`, async () => {
     tap.same({ obj, $ }, want, `at`);
   });
 
+  tap.test(`leaves`, async () => {
+    const obj = { a: ["foo", "bar"], b: { c: [1, 2, 3] } };
+    const leafLog = [],
+      allLog = [];
+    jp
+      .nest()
+      .leaf.visitor("$..*", (value, path) => leafLog.push(path))
+      .visitor("$..*", (value, path) => allLog.push(path))(obj);
+
+    const leafWant = [
+      ["$", "a", 0],
+      ["$", "a", 1],
+      ["$", "b", "c", 0],
+      ["$", "b", "c", 1],
+      ["$", "b", "c", 2]
+    ];
+
+    const allWant = [
+      ["$", "a"],
+      ["$", "b"],
+      ["$", "a", 0],
+      ["$", "a", 1],
+      ["$", "b", "c"],
+      ["$", "b", "c", 0],
+      ["$", "b", "c", 1],
+      ["$", "b", "c", 2]
+    ];
+
+    tap.same(leafLog, leafWant, `leaf limitter`);
+    tap.same(allLog, allWant, `leaf limitter - chains original`);
+  });
+
   tap.test(`Natural ordering`, async () => {
-    tap.pass("OK!");
     const nest = jp.nest();
     const paths = ["$.foo.bar", "$.foo.baz"];
     const obj = { foo: { bar: "Hello", baz: "Bye!" } };
