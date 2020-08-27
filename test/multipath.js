@@ -62,8 +62,8 @@ tap.test(`MultiPath`, async () => {
         (value, path) => "https://example.com" + value
       )
       .addVisitor("$..title", (value, path) => after.push({ value, path }))
-      .addMutator("$.they.were.here", () => false) // NOP - path !exists
-      .addSetter("$.i.was.here", () => true); // vivify
+      .addMutator("$.they.were.here", false) // NOP - path !exists
+      .addSetter("$.i.was.here", true); // vivify
 
     const $ = {};
     mp.compile()(obj, $);
@@ -122,9 +122,9 @@ tap.test(`MultiPath`, async () => {
   });
 
   tap.test(`Misc`, async () => {
-    const mp = new MultiPath().addSetter("$", () => ({
+    const mp = new MultiPath().addSetter("$", {
       empty: false
-    }));
+    });
     const obj = mp.compile()(undefined);
     tap.same(obj, { empty: false }, `vivify root object`);
   });
