@@ -15,10 +15,10 @@ tap.test(`conformance`, async () => {
     mp.addVisitor(path, (value, path) => got.push({ value, path }));
   mp.compile()(obj);
 
-  tap.same(got, want, `MultiPath`);
+  tap.same(got, want, `Nest`);
 });
 
-tap.test(`MultiPath`, async () => {
+tap.test(`Nest`, async () => {
   tap.test(`Visitors and mutators`, async () => {
     const obj = {
       page: {
@@ -144,7 +144,7 @@ tap.test(`MultiPath`, async () => {
       ]
     };
 
-    tap.same($, want, `natural ordering of MultiPath`);
+    tap.same($, want, `natural ordering of Nest`);
   });
 
   tap.test(`Misc`, async () => {
