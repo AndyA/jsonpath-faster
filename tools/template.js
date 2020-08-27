@@ -1,47 +1,23 @@
 "use strict";
 
+const _ = require("lodash");
 const inspect = require("../lib/inspect");
 
-const Compiler = require("../lib/compiler");
-const Cache = require("../lib/compat/cache");
+const jp = require("..");
 
-const selectorCompiler = require("../lib/compilers/selectors");
-const callbackCompiler = require("../lib/compilers/callback");
-const lib = require("../lib/compilers/lib");
+const obj = [];
 
-const compiler = new Compiler(callbackCompiler, selectorCompiler, lib);
-//
-// I'd like this to work. Think it can. However the appeal is
-// limited to literal paths.
-//  jp`$.names[${i}][${j}]..id`.each(obj, (value, path) => {});
-
-// This would also be nice.
-//  const v = jp`$.name[0][0].id`.value(obj);
-
-function JSONPath() {
-  const cache = new Cache(compiler);
-  const jp = (parts, ...$) => {
-    let idx = 0;
-    const path = parts.reduce((a, b) => `${a}($[${idx++}])${b}`);
-    return {
-      query: (obj, count) => jp.query(obj, path, count, $),
-      paths: (obj, count) => jp.paths(obj, path, count, $),
-      nodes: (obj, count) => jp.nodes(obj, path, count, $),
-      value: (obj, newValue) => jp.value(obj, path, newValue, $),
-      parent: obj => jp.parent(obj, path, $),
-      apply: (obj, fn) => jp.apply(obj, path, fn, $)
-    };
-  };
-
-  return Object.assign(jp, { JSONPath }, cache);
+for (let x = 0; x < 3; x++) {
+  for (let y = 0; y < 3; y++) {
+    for (let z = 0; z < 3; z++) {
+      jp`$[${x}][${y}][${z}]`.value(obj, { x, y, z });
+    }
+  }
 }
 
-const jp = new JSONPath();
+console.log(inspect(obj));
 
-const obj = require("../test/upstream/data/store");
-
-for (const has of ["category", "author", "isbn"]) {
-  const books = jp`$.store.book[?(@.${has})]`.paths(obj);
-  //  const books = jp.paths(obj, `$.store.book[?(@.${has})]`);
-  console.log(inspect(books));
-}
+const grid = _.range(3).map(x =>
+  _.range(3).map(y => _.range(3).map(z => ({ x, y, z })))
+);
+console.log(inspect(grid));
