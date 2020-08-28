@@ -432,9 +432,9 @@ This can be written more concisely using `prefix`.
 ```javascript
 nest
   .prefix("$.assets[*]..meta")
-  .visitor("id", value => {})
-  .visitor("author", value => {})
-  .visitor("modified", value => {});
+  .visitor("$.id", value => {})
+  .visitor("$.author", value => {})
+  .visitor("$.modified", value => {});
 ```
 
 #### Execution order
