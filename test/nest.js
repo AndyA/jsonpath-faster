@@ -146,9 +146,7 @@ tap.test(`Nest`, async () => {
   });
 
   tap.test(`Misc`, async () => {
-    const mp = jp.nest().setter("$", {
-      empty: false
-    });
+    const mp = jp.nest().setter("$", { empty: false });
     const obj = mp(undefined);
     tap.same(obj, { empty: false }, `vivify root object`);
   });
