@@ -5,9 +5,9 @@ const jp = require("..");
 
 const obj = require("./upstream/data/store");
 
-const leaves = jp.leaf.string.paths(obj, "$..*");
-const inners = jp.interior.string.paths(obj, "$..*");
-const empty = jp.leaf.interior.string.paths(obj, "$..*");
+const leaves = jp.string.leaf.paths(obj, "$..*");
+const inners = jp.string.interior.paths(obj, "$..*");
+const empty = jp.string.leaf.interior.paths(obj, "$..*");
 
 const want = {
   empty: [],
@@ -46,5 +46,5 @@ const want = {
 
 tap.same({ empty, leaves, inners }, want, `pragma chain`);
 
-const tips = jp.leaf.string`$..*`.paths(obj);
+const tips = jp.string.leaf`$..*`.paths(obj);
 tap.same(tips, want.leaves, `pragma chain + template`);
