@@ -118,38 +118,6 @@ tap.test(`Nest`, async () => {
     tap.same({ obj, $ }, want, `at`);
   });
 
-  tap.test(`leaves`, async () => {
-    const obj = { a: ["foo", "bar"], b: { c: [1, 2, 3] } };
-    const leafLog = [],
-      allLog = [];
-    jp
-      .nest()
-      .leaf.visitor("$..*", (value, path) => leafLog.push(path))
-      .visitor("$..*", (value, path) => allLog.push(path))(obj);
-
-    const leafWant = [
-      ["$", "a", 0],
-      ["$", "a", 1],
-      ["$", "b", "c", 0],
-      ["$", "b", "c", 1],
-      ["$", "b", "c", 2]
-    ];
-
-    const allWant = [
-      ["$", "a"],
-      ["$", "b"],
-      ["$", "a", 0],
-      ["$", "a", 1],
-      ["$", "b", "c"],
-      ["$", "b", "c", 0],
-      ["$", "b", "c", 1],
-      ["$", "b", "c", 2]
-    ];
-
-    tap.same(leafLog, leafWant, `leaf limiter`);
-    tap.same(allLog, allWant, `leaf limiter - chains original`);
-  });
-
   tap.test(`Natural ordering`, async () => {
     const nest = jp.nest();
     const paths = ["$.foo.bar", "$.foo.baz"];
