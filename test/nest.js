@@ -95,7 +95,7 @@ tap.test(`Nest`, async () => {
     mp.at("$.foo.bar", `$.log.push([@.value, @.path]);`)
       .at("$.foo.baz", `$.log.push([@.value]);`)
       .at("$.foo.bof[0].meta.control", `@.value = true;`)
-      .at("$..*", `$.survey.push([@.pathString, @.leaf]);`);
+      .leaf.at("$..*", `$.survey.push([@.pathString, @.value]);`);
 
     const obj = { foo: { bar: "Bar!", baz: "Baz!" } };
     const $ = { log: [], survey: [] };

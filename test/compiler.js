@@ -47,19 +47,6 @@ tap.test(`read-only props`, async () => {
   }
 });
 
-tap.test(`@ properties`, async () => {
-  const f = fun("$..*", ctx => `extra(@.leaf, @.nleaf, @.pathString)`, {});
-  const obj = { foo: [{ name: "A" }, { name: "B" }], bar: "String" };
-  const log = [];
-  const want = [
-    ["String", "String", "$.bar"],
-    ["A", "A", "$.foo[0].name"],
-    ["B", "B", "$.foo[1].name"]
-  ];
-  f(obj, 1, (...args) => log.push(args));
-  tap.same(log, want, `leaf, nleaf and pathString`);
-});
-
 tap.test(`bad use`, async () => {
   const ctx = jp.compiler.makeContext({});
   tap.throws(() => ctx.use("flibble"), /in library/i, `bad use`);
