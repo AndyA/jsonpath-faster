@@ -20,7 +20,10 @@ tap.test(`bad AST`, async () => {
 
 const addTerminal = (path, lastly, ctx) =>
   jp.compiler.compile(
-    [...jp.parse(path), { operation: "terminal", scope: "internal", lastly }],
+    [
+      ...jp.parse(path),
+      { operation: "terminal", scope: "internal", lastly, pragmas: {} }
+    ],
     ctx
   );
 
