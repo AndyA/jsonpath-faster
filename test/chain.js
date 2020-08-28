@@ -7,8 +7,10 @@ const obj = require("./upstream/data/store");
 
 const leaves = jp.leaf.string.paths(obj, "$..*");
 const inners = jp.interior.string.paths(obj, "$..*");
+const empty = jp.leaf.interior.string.paths(obj, "$..*");
 
 const want = {
+  empty: [],
   leaves: [
     "$.store.book[0].category",
     "$.store.book[0].author",
@@ -42,4 +44,4 @@ const want = {
   ]
 };
 
-tap.same({ leaves, inners }, want, `pragma chain`);
+tap.same({ empty, leaves, inners }, want, `pragma chain`);
