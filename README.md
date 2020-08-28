@@ -365,7 +365,8 @@ the 'leaf.string' cache and again in the 'string.leaf' cache.
 
 ## Tagged literal syntax
 
-You can populate a 3d matix like this:
+You can populate a 3d matix like this but because the path is dynamic it's
+not the most efficient way.
 
 ```javascript
 const matrix = [];
@@ -376,10 +377,10 @@ for (let x = 0; x < 3; x++)
 ```
 
 Because the path is different each time, every call to `jp.value()` has to
-compile and cache a new function to handle it. If you run the code again
-later then the cached versions will be used.
+compile and cache a new function to handle it. Only if you run the code again
+later will the cached versions be used.
 
-Instead we can use a backtick literal tagged with `jp`. 
+A more efficient approach is to use a backtick literal tagged with `jp`. 
 
 ```javascript
 const matrix = [];
