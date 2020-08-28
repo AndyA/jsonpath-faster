@@ -427,6 +427,16 @@ nest
   .visitor("$.assets[*]..meta.modified", value => {});
 ```
 
+This can be written more concisely using `prefix`.
+
+```javascript
+nest
+  .prefix("$.assets[*]..meta")
+  .visitor("id", value => {})
+  .visitor("author", value => {})
+  .visitor("modified", value => {});
+```
+
 #### Execution order
 
 A nest attempts to behave as if the visitors are executed in the order they were
@@ -497,7 +507,7 @@ object. The function is called with two arguments: value and path.
 nest.string.visitor("$..books[*].authors[(@.length - 1)].name", (value, path) => console.log(`${path}: ${value}`));
 ```
 
-If you don't need the value of the path provide a function that accepts only a
+If you don't need the path provide a function that accepts only a
 single value argument; the generated code is slightly faster if it doesn't
 have to track the path as it traverses the object.
 
@@ -514,9 +524,16 @@ callback function. A mutator does not vivify missing parts of the object.
 nest.mutator("$..price", price => price * 3);
 ```
 
+If the replacement value is a constant it may be passed directly.
+
+```javascript
+nest.mutator("$..price", price => 1); // everything's a £
+```
+
 #### nest.setter(path, fn)
 
-Like `mutator` but with vivification enabled.
+Like `mutator` but with vivification enabled. Like `mutator` it accepts either
+a function or a constant.
 
 ```javascript
 nest.setter("$.this.does.not.exist.yet", true);
