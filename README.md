@@ -504,7 +504,8 @@ Register a visitor function that will be called for each matching node in the
 object. The function is called with two arguments: value and path.
 
 ```javascript
-nest.string.visitor("$..books[*].authors[(@.length - 1)].name", (value, path) => console.log(`${path}: ${value}`));
+nest.string.visitor("$..books[*].authors[(@.length - 1)].name",
+  (value, path) => console.log(`${path}: ${value}`));
 ```
 
 If you don't need the path provide a function that accepts only a
@@ -512,7 +513,8 @@ single value argument; the generated code is slightly faster if it doesn't
 have to track the path as it traverses the object.
 
 ```javascript
-nest.visitor("$..books[*].authors[(@.length - 1)].name", value => console.log(value));
+nest.visitor("$..books[*].authors[(@.length - 1)].name", 
+  value => console.log(value));
 ```
 
 #### nest.mutator(path, fn)
