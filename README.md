@@ -389,7 +389,7 @@ In this case the path is compiled only once (with placeholders for the
 bound x, y and z values). 
 
 Internally the `$` context variable is used to pass the bound values
-to the path function.
+to the generated path function.
 
 ## Nests
 
@@ -464,6 +464,8 @@ nest.visitor("$..*", (value, path) => {
 });
 ```
 
+## Nest methods
+
 #### jp.nest()
 
 Creates a new, empty nest. Actions may be added by its `visitor`, `mutator`,
@@ -481,8 +483,6 @@ for (const doc of docs) {
 The nest function accepts an optional second argument that, if present will
 be bound to `$` and may be referred to in script and filter expressions and
 in any code compiled using `nest.at()`.
-
-## Nest methods
 
 #### nest.visitor(path, fn)
 
