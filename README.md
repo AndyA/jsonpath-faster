@@ -312,7 +312,7 @@ consistent order for maximum efficiency.
 ```javascript
 var n1 = jp.leaf.string.paths(obj, "$..*");
 var n2 = jp.string.leaf.paths(obj, "$..*");
-```gg
+```
 
 The two lines above will cause the path `$..*` to be compiled twice - once in
 the 'leaf.string' cache and again in the 'string.leaf' cache.
