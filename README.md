@@ -499,7 +499,8 @@ The nest function accepts an optional second argument that, if present will
 be bound to `$` and may be referred to in script and filter expressions and
 in any code compiled using `nest.at()`.
 
-Its return value is resulting object. Usually this is the same as the `doc`
+Its return value is the resulting object after all mutators and setters have
+been applied to it. Usually this is the same as the `doc`
 you passed in. However it is possible to vivify an undefined root object.
 
 ```javascript
