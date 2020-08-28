@@ -183,8 +183,8 @@ A context value `$` may be provided. The contents of `$` may be accessed in
 script and filter expressions.
 
 ```javascript
-const $ = { price: 10 };
-var bargains = jp.query(data, "$..book[?(@.price <= $.price)]", { price: 10 })
+var bargains = jp.query(data, 
+  "$..book[?(@.price <= $.price)]", { price: 10 });
 // [
 //   {
 //     category: 'reference',
@@ -219,6 +219,8 @@ var paths = jp.paths(data, '$..author');
 // ]
 ```
 
+If you'd prefer to receive paths as strings check out [Pragma Chains](#pragma-chains).
+
 #### jp.nodes(obj, pathExpression[, count][, $])
 
 Find elements and their corresponding paths in `obj` matching `pathExpression`.
@@ -246,7 +248,8 @@ If you need to pass a context value without a `newValue` you must explicitly
 pass `undefined` as `newValue`.
 
 ```javascript
-var bargain = jp.value(data, "$..book[?(@.price <= $.price)]", undefined, { price: 10 })
+var bargain = jp.value(data, 
+  "$..book[?(@.price <= $.price)]", undefined, { price: 10 })
 ```
 
 #### jp.parent(obj, pathExpression[, $])
@@ -261,7 +264,8 @@ passed the value of each node and its path. Returns matching nodes with
 their updated values.
 
 ```javascript
-var nodes = jp.apply(data, '$..author', function(value, path) { return value.toUpperCase() });
+var nodes = jp.apply(data, 
+  '$..author', function(value, path) { return value.toUpperCase() });
 // [
 //   { path: ['$', 'store', 'book', 0, 'author'], value: 'NIGEL REES' },
 //   { path: ['$', 'store', 'book', 1, 'author'], value: 'EVELYN WAUGH' },
