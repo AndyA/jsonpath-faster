@@ -375,7 +375,7 @@ for (let x = 0; x < 3; x++)
       jp.value(matrix, `$[${x}][${y}][${z}]`, { x, y, z });
 ```
 
-Because the path is different each time, every call to `jp.valuei()` has to
+Because the path is different each time, every call to `jp.value()` has to
 compile and cache a new function to handle it. If you run the code again
 later then the cached versions will be used.
 
