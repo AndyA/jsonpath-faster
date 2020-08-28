@@ -92,10 +92,12 @@ tap.test(`Nest`, async () => {
   tap.test(`Actions`, async () => {
     const mp = jp.nest();
 
-    mp.at("$.foo.bar", `$.log.push([@.value, @.path]);`)
-      .at("$.foo.baz", `$.log.push([@.value]);`)
-      .at("$.foo.bof[0].meta.control", `@.value = true;`)
-      .string.leaf.at("$..*", `$.survey.push([@.path, @.value]);`);
+    mp.prefix("$.foo")
+      .at("$.bar", `$.log.push([@.value, @.path]);`)
+      .at("$.baz", `$.log.push([@.value]);`)
+      .at("$.bof[0].meta.control", `@.value = true;`);
+
+    mp.string.leaf.at("$..*", `$.survey.push([@.path, @.value]);`);
 
     const obj = { foo: { bar: "Bar!", baz: "Baz!" } };
     const $ = { log: [], survey: [] };

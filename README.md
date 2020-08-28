@@ -551,6 +551,18 @@ nest.at("$..flags.seen", "@.value = true");  // create `seen`
 nest.at("$..flags.seen", "@.nvalue = true"); // only sets existing `seen`
 ```
 
+#### nest.prefix(path)
+
+Add a prefix path for this call chain.
+
+```javascript
+nest
+  .prefix("$.assets[*]..meta")
+  .visitor("id", value => {})
+  .visitor("author", value => {})
+  .visitor("modified", value => {});
+```
+
 ## License
 
 [MIT](LICENSE)

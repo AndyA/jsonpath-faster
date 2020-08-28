@@ -2,8 +2,9 @@
 
 const tap = require("tap");
 const _ = require("lodash");
+const jp = require("..");
 
-const { makeTokenMatcher } = require("../lib/tokens");
+const { makeTokenMatcher, stripRoot } = require("../lib/tokens");
 
 tap.formatSnapshot = obj => JSON.stringify(obj, null, 2);
 
@@ -59,3 +60,10 @@ for (const { name, when } of tests) {
   const [included, excluded] = _.partition(data, test);
   tap.matchSnapshot({ included, excluded }, name);
 }
+
+const ast1 = jp.parse("$.foo.bar");
+const [head, ...tail] = ast1;
+const ast2 = stripRoot(ast1);
+tap.same(ast2, tail, `root stripped`);
+const ast3 = stripRoot(ast2);
+tap.same(ast3, tail, `root stripped again (NOP)`);

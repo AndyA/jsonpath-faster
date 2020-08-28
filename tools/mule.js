@@ -21,10 +21,16 @@ const nest = jp.nest();
 //  .visitor("$..author", value => authors.push(value))
 //  .mutator("$..price", value => value * 1.1);
 
+//nest
+//  .visitor("$.assets[*]..meta.id", value => {})
+//  .visitor("$.assets[*]..meta.author", value => {})
+//  .visitor("$.assets[*]..meta.modified", value => {});
+
 nest
-  .visitor("$.assets[*]..meta.id", value => {})
-  .visitor("$.assets[*]..meta.author", value => {})
-  .visitor("$.assets[*]..meta.modified", value => {});
+  .prefix("$.assets[*]..meta")
+  .visitor("$.id", value => {})
+  .visitor("$.author", value => {})
+  .visitor("$.modified", value => {});
 
 //nest(data);
 //console.log(inspect(data));
