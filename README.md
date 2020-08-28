@@ -577,9 +577,9 @@ Add a prefix path for this call chain.
 ```javascript
 nest
   .prefix("$.assets[*]..meta")
-  .visitor("id", value => {})
-  .visitor("author", value => {})
-  .visitor("modified", value => {});
+  .visitor("$.id", value => {})
+  .visitor("$.author", value => {})
+  .visitor("$.modified", value => {});
 ```
 
 ## License
