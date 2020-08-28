@@ -146,22 +146,22 @@ Given this sample data set, see example expressions below:
 
 Example JSONPath expressions:
 
-JSONPath                      | Description
-------------------------------|------------
-`$.store.book[*].author`       | The authors of all books in the store
-`$..author`                     | All authors
-`$.store.*`                    | All things in store, which are some books and a red bicycle
-`$.store..price`                | The price of everything in the store
-`$..book[2]`                    | The third book
-`$..book[(@.length-1)]`         | The last book via script subscript
-`$..book[-1:]`                  | The last book via slice
-`$..book[0,1]`                  | The first two books via subscript union
-`$..book[:2]`                  | The first two books via subscript array slice
-`$..book[?(@.isbn)]`            | Filter all books with isbn number
-`$..book[?(@.price<10)]`        | Filter all books cheaper than 10
-`$..book[?(@.price==8.95)]`        | Filter all books that cost 8.95
-`$..book[?(@.price<30 && @.category=="fiction")]`        | Filter all fiction books cheaper than 30
-`$..*`                         | All members of JSON structure
+JSONPath                                          | Description
+--------------------------------------------------|------------
+`$.store.book[*].author`                          | The authors of all books in the store
+`$..author`                                       | All authors
+`$.store.*`                                       | All things in store, which are some books and a red bicycle
+`$.store..price`                                  | The price of everything in the store
+`$..book[2]`                                      | The third book
+`$..book[(@.length-1)]`                           | The last book via script subscript
+`$..book[-1:]`                                    | The last book via slice
+`$..book[0,1]`                                    | The first two books via subscript union
+`$..book[:2]`                                     | The first two books via subscript array slice
+`$..book[?(@.isbn)]`                              | Filter all books with isbn number
+`$..book[?(@.price<10)]`                          | Filter all books cheaper than 10
+`$..book[?(@.price==8.95)]`                       | Filter all books that cost 8.95
+`$..book[?(@.price<30 && @.category=="fiction")]` | Filter all fiction books cheaper than 30
+`$..*`                                            | All members of JSON structure
 
 
 ## Methods
@@ -183,7 +183,6 @@ Find paths to elements in `obj` matching `pathExpression`.  Returns an array of
 element paths that satisfy the provided JSONPath expression. Each path is
 itself an array of keys representing the location within `obj` of the matching
 element.  Returns only first `count` paths if specified.
-
 
 ```javascript
 var paths = jp.paths(data, '$..author');
@@ -225,13 +224,12 @@ Returns the parent of the first matching element.
 #### jp.apply(obj, pathExpression, fn)
 
 Runs the supplied function `fn` on each matching element, and replaces each
-matching element with the return value from the function.  The function accepts
-the value of the matching element as its only parameter.  Returns matching
-nodes with their updated values.
-
+matching element with the return value from the function. The function is
+passed the value of each node and its path. Returns matching nodes with 
+their updated values.
 
 ```javascript
-var nodes = jp.apply(data, '$..author', function(value) { return value.toUpperCase() });
+var nodes = jp.apply(data, '$..author', function(value, path) { return value.toUpperCase() });
 // [
 //   { path: ['$', 'store', 'book', 0, 'author'], value: 'NIGEL REES' },
 //   { path: ['$', 'store', 'book', 1, 'author'], value: 'EVELYN WAUGH' },
@@ -265,11 +263,93 @@ var pathExpression = jp.stringify(['$', 'store', 'book', 0, 'author']);
 // "$.store.book[0].author"
 ```
 
+## Pragma chains
+
+The methods described above potentially walk the whole of an object returning both
+interior and leaf nodes. When they return a path it is in the form of an array which
+may be stringified using `jp.stringify()`.
+
+Perhaps you'd like to get the stringified paths of all the leaf nodes in an object. The
+behaviour of `jp` can be altered using pragmatic chains:
+
+```javascript
+const leaves = jp.string.leaf.paths(obj, "$..*");
+// [
+//   '$.store.book[0].category',
+//   '$.store.book[0].author',
+//   '$.store.book[0].title',
+//   '$.store.book[0].price',
+//   '$.store.book[1].category',
+//   '$.store.book[1].author',
+//   '$.store.book[1].title',
+//   '$.store.book[1].price',
+//   '$.store.book[2].category',
+//   '$.store.book[2].author',
+//   '$.store.book[2].title',
+//   '$.store.book[2].isbn',
+//   '$.store.book[2].price',
+//   '$.store.book[3].category',
+//   '$.store.book[3].author',
+//   '$.store.book[3].title',
+//   '$.store.book[3].isbn',
+//   '$.store.book[3].price',
+//   '$.store.bicycle.color',
+//   '$.store.bicycle.price'
+// ]
+```
+
+The available pragmas are `leaf`, `interior` and `string`.
+
+pragma     | effect
+---        | ---
+`leaf`     | only visit leaf (non-object) nodes
+`interior` | the opposite of `leaf`: only visit non-leaf (object) nodes
+`string`   | where applicable stringify paths before returning them
+
+The order of the pragmas is unimportant but you should try to use them in a
+consistent order for maximum efficiency.
+
+```javascript
+var n1 = jp.leaf.string.paths(obj, "$..*");
+var n2 = jp.string.leaf.paths(obj, "$..*");
+```gg
+
+The two lines above will cause the path `$..*` to be compiled twice - once in
+the 'leaf.string' cache and again in the 'string.leaf' cache.
+
+## Tagged literal syntax
+
+You can populate a 3d matix like this:
+
+```javascript
+const matrix = [];
+for (let x = 0; x < 3; x++)
+  for (let y = 0; y < 3; y++)
+    for (let z = 0; z < 3; z++)
+      jp.value(matrix, `$[${x}][${y}][${z}]`, { x, y, z });
+```
+
+Because the path is different each time, every call to `jp.valuei()` has to
+compile and cache a new function to handle it. If you run the code again
+later then the cached versions will be used.
+
+Instead we can use a backtick literal tagged with `jp`. 
+
+```javascript
+const matrix = [];
+for (let x = 0; x < 3; x++)
+  for (let y = 0; y < 3; y++)
+    for (let z = 0; z < 3; z++)
+      jp`$[${x}][${y}][${z}]`.value(matrix, { x, y, z });
+```
+
+In this case the path is compiled only once (with placeholders for the
+bound x, y and z values). 
+
 #### Evaluating Script Expressions
 
 Script expressions are a potential security hole - particularly if you evaluate
-JSONpaths from an untrusted source. `jsonpath` uses [static-eval](https://github.com/substack/static-eval) 
-to evaluate expressions in a relatively safe way.
+JSONpaths from an untrusted source.
 
 `jsonpath-faster` transforms script expressions using `esprima`, `estraverse` &
 `escodegen` only allowing constructs that are considered safe. The only variable
@@ -278,28 +358,6 @@ other dangerous constructs are all blocked.
 
 This code has not been security audited. Please don't feed untrusted code into
 until it has been.
-
-#### Grammar
-
-This project uses a formal BNF
-[grammar](https://github.com/dchester/jsonpath/blob/master/lib/grammar.js) to
-parse JSONPath expressions, an attempt at reverse-engineering the intent of the
-original implementation, which parses via a series of creative regular
-expressions.  The original regex approach can sometimes be forgiving for better
-or for worse (e.g., `$['store]` => `$['store']`), and in other cases, can be
-just plain wrong (e.g. `[` => `$`). 
-
-#### Other Minor Differences
-
-As a result of using a real parser and static evaluation, there are some
-arguable bugs in the original library that have not been carried through here:
-
-- strings in subscripts may now be double-quoted
-- final `step` arguments in slice operators may now be negative
-- script expressions may now contain `.` and `@` characters not referring to instance variables
-- subscripts no longer act as character slices on string elements
-- non-ascii non-word characters are no-longer valid in member identifier names; use quoted subscript strings instead (e.g., `$['$']` instead of `$.$`)
-- unions now yield real unions with no duplicates rather than concatenated results
 
 ## License
 
