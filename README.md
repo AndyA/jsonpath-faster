@@ -483,7 +483,7 @@ nest.visitor("$..*", (value, path) => {
 
 #### jp.nest()
 
-Creates a new, empty nest. Actions may be added by its `visitor`, `mutator`,
+Creates a new, empty nest. Actions may be added using its `visitor`, `mutator`,
 `setter` and `at` methods. Having added actions the nest may be called as
 a function to apply the actions to an object.
 
@@ -498,6 +498,15 @@ for (const doc of docs) {
 The nest function accepts an optional second argument that, if present will
 be bound to `$` and may be referred to in script and filter expressions and
 in any code compiled using `nest.at()`.
+
+Its return value is resulting object. Usually this is the same as the `doc`
+you passed in. However it is possible to vivify an undefined root object.
+
+```javascript
+const mp = jp.nest().setter("$", { empty: false });
+const obj = mp(undefined);
+// obj is { empty: false }
+```
 
 #### nest.visitor(path, fn)
 
