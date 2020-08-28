@@ -5,7 +5,7 @@ Query JavaScript objects with JSONPath expressions. A faster compiling / cached 
 ## Compiled JSONPaths
 
 This module is designed (and tested) to be highly compatible with
-[jsonpath](https://www.npmjs.com/package/jsonpath).
+[jsonpath](https://www.npmjs.com/package/jsonpath) - with many extensions.
 
 It compiles JSONpath expressions into the corresponding Javascript and caches
 the resulting code. For any JSONPath that is used more than a few times the
@@ -39,7 +39,10 @@ limiting counts.
 | `$.store.book[1]`           |  63,779  |       8,686,778 | 136.63 |
 | `$.store.bicycle["color"]`  |  59,106  |       8,244,142 | 139.54 |
 
-With longer paths the advantage increases.
+With longer paths the speed advantage increases. You can also use 
+[Nests](#nests) to combine multiple JSONpaths and corresponding
+actions into a single function eliminating the redundancy of scanning
+the same parts of an object multiple times.
 
 ### Memory usage
 
@@ -53,7 +56,7 @@ paths there could be a lot of cached generated code.
 In addition to its own test suite `jsonpath-faster` passes all of `jsonpath`'s
 tests. 
 
-There are two known differences:
+There are two known differences (and quite a few extensions):
 
 Script and filter expressions are sanitised differently. In general
 `jsonpath-faster` is slightly more restrictive in what
@@ -163,10 +166,9 @@ JSONPath                                          | Description
 `$..book[?(@.price<30 && @.category=="fiction")]` | Filter all fiction books cheaper than 30
 `$..*`                                            | All members of JSON structure
 
-
 ## Methods
 
-#### jp.query(obj, pathExpression[, count])
+#### jp.query(obj, pathExpression[, count][, $])
 
 Find elements in `obj` matching `pathExpression`.  Returns an array of elements
 that satisfy the provided JSONPath expression, or an empty array if none were
@@ -177,7 +179,30 @@ var authors = jp.query(data, '$..author');
 // [ 'Nigel Rees', 'Evelyn Waugh', 'Herman Melville', 'J. R. R. Tolkien' ]
 ```
 
-#### jp.paths(obj, pathExpression[, count])
+A context value `$` may be provided. The contents of `$` may be accessed in
+script and filter expressions.
+
+```javascript
+const $ = { price: 10 };
+var bargains = jp.query(data, "$..book[?(@.price <= $.price)]", { price: 10 })
+// [
+//   {
+//     category: 'reference',
+//     author: 'Nigel Rees',
+//     title: 'Sayings of the Century',
+//     price: 8.95
+//   },
+//   {
+//     category: 'fiction',
+//     author: 'Herman Melville',
+//     title: 'Moby Dick',
+//     isbn: '0-553-21311-3',
+//     price: 8.99
+//   }
+// ]
+```
+
+#### jp.paths(obj, pathExpression[, count][, $])
 
 Find paths to elements in `obj` matching `pathExpression`.  Returns an array of
 element paths that satisfy the provided JSONPath expression. Each path is
@@ -194,7 +219,7 @@ var paths = jp.paths(data, '$..author');
 // ]
 ```
 
-#### jp.nodes(obj, pathExpression[, count])
+#### jp.nodes(obj, pathExpression[, count][, $])
 
 Find elements and their corresponding paths in `obj` matching `pathExpression`.
 Returns an array of node objects where each node has a `path` containing an
@@ -211,20 +236,27 @@ var nodes = jp.nodes(data, '$..author');
 // ]
 ```
 
-#### jp.value(obj, pathExpression[, newValue])
+#### jp.value(obj, pathExpression[, newValue[, $]])
 
 Returns the value of the first element matching `pathExpression`.  If
 `newValue` is provided, sets the value of the first matching element and
 returns the new value.
 
-#### jp.parent(obj, pathExpression)
+If you need to pass a context value without a `newValue` you must explicitly
+pass `undefined` as `newValue`.
+
+```javascript
+var bargain = jp.value(data, "$..book[?(@.price <= $.price)]", undefined, { price: 10 })
+```
+
+#### jp.parent(obj, pathExpression[, $])
 
 Returns the parent of the first matching element.
 
-#### jp.apply(obj, pathExpression, fn)
+#### jp.apply(obj, pathExpression, fn[, $])
 
 Runs the supplied function `fn` on each matching element, and replaces each
-matching element with the return value from the function. The function is
+matching element with any value returned from the function. The function is
 passed the value of each node and its path. Returns matching nodes with 
 their updated values.
 
@@ -236,6 +268,16 @@ var nodes = jp.apply(data, '$..author', function(value, path) { return value.toU
 //   { path: ['$', 'store', 'book', 2, 'author'], value: 'HERMAN MELVILLE' },
 //   { path: ['$', 'store', 'book', 3, 'author'], value: 'J. R. R. TOLKIEN' }
 // ]
+```
+
+If `fn` returns nothing (`undefined`) the node's value will not be replaced.
+
+```javascript
+jp.apply(data, '$..author', function(value, path) { console.log(value) });
+// Nigel Rees
+// Evelyn Waugh
+// Herman Melville
+// J. R. R. Tolkien
 ```
 
 #### jp.parse(pathExpression)
@@ -346,18 +388,164 @@ for (let x = 0; x < 3; x++)
 In this case the path is compiled only once (with placeholders for the
 bound x, y and z values). 
 
-#### Evaluating Script Expressions
+Internally the `$` context variable is used to pass the bound values
+to the path function.
 
-Script expressions are a potential security hole - particularly if you evaluate
-JSONpaths from an untrusted source.
+## Nests
 
-`jsonpath-faster` transforms script expressions using `esprima`, `estraverse` &
-`escodegen` only allowing constructs that are considered safe. The only variable
-that can be accessed is `@`. Statements, function calls, throw, comments and many
-other dangerous constructs are all blocked.
+Sometimes you need to run many JSONpath queries against each one of a number
+of objects. Instead of compiling each individual path into its own Javascript 
+function a Nest allows multiple paths to be compiled into a single function.
 
-This code has not been security audited. Please don't feed untrusted code into
-until it has been.
+```javascript
+const survey = [];
+const authors = [];
+const nest = jp.nest();
+nest
+  .visitor("$..*", (value, path) => survey.push({ value, path }))
+  .visitor("$..author", value => authors.push(value))
+  .mutator("$..price", value => value * 1.1);
+
+nest(data); // the nest is a function
+// All prices increased by 10%, survey and authors arrays populated
+```
+
+Calling the nest function runs all the actions that you have registered with
+the nest. Actions with paths that share a common prefix are efficiently
+compiled so that the prefix is traversed only once. In the following 
+example the code to traverse `$.assets[*]..meta` is executed only once
+for each call `nest()`
+
+```javascript
+nest
+  .visitor("$.assets[*]..meta.id", value => {})
+  .visitor("$.assets[*]..meta.author", value => {})
+  .visitor("$.assets[*]..meta.modified", value => {});
+```
+
+#### Execution order
+
+A nest attempts to behave as if the visitors are executed in the order they were
+declared even though, as in the example above, the paths may be matched in a
+different order. To do this it defers all the actions until after the search
+of the object is complete.
+
+That means that any mutations are executed after the object has been scanned
+so the following code may have surprising results.
+
+```javascript
+nest
+  .mutator("$..thing.seen", true)
+  .visitor("$..seen", (value, path) => console.log(`Seen at ${path}`));
+```
+
+The visitor won't match any of the `seen` flags set by the mutator because the
+mutations only take place after the object has been scanned. If you need to
+work with the mutated values use a second nest.
+
+#### Pragmas
+
+Like `jp` nests understand pragma chains.
+
+```javascript
+const nest = jp.nest();
+nest.string.leaf.visitor("$..*", (value, path) =>
+  console.log(`${path}: ${value}`)
+);
+```
+
+A nest inherits pragmas from the `jp` that creates it, so this is equivalent to
+the previous example:
+
+```javascript
+const nest = jp.string.leaf.nest();
+nest.visitor("$..*", (value, path) => {
+  console.log(`${path}: ${value}`)
+});
+```
+
+#### jp.nest()
+
+Creates a new, empty nest. Actions may be added by its `visitor`, `mutator`,
+`setter` and `at` methods. Having added actions the nest may be called as
+a function to apply the actions to an object.
+
+```javascript
+const nest = jp.nest();
+nest.visitor("$..*", (value, path) => console.log(path));
+for (const doc of docs) {
+  nest(doc);
+}
+```
+
+The nest function accepts an optional second argument that, if present will
+be bound to `$` and may be referred to in script and filter expressions and
+in any code compiled using `nest.at()`.
+
+## Nest methods
+
+#### nest.visitor(path, fn)
+
+Register a visitor function that will be called for each matching node in the
+object. The function is called with two arguments: value and path.
+
+```javascript
+nest.string.visitor("$..books[*].authors[(@.length - 1)].name", (value, path) => console.log(`${path}: ${value}`));
+```
+
+If you don't need the value of the path provide a function that accepts only a
+single value argument; the generated code is slightly faster if it doesn't
+have to track the path as it traverses the object.
+
+```javascript
+nest.visitor("$..books[*].authors[(@.length - 1)].name", value => console.log(value));
+```
+
+#### nest.mutator(path, fn)
+
+Similar to `visitor` but the matched value is set to the return value of the
+callback function. A mutator does not vivify missing parts of the object.
+
+```javascript
+nest.mutator("$..price", price => price * 3);
+```
+
+#### nest.setter(path, fn)
+
+Like `mutator` but with vivification enabled.
+
+```javascript
+nest.setter("$.this.does.not.exist.yet", true);
+```
+
+#### nest.at(path, code)
+
+Inject code directly into the generated nest function. Within the supplied code `@`
+is a magic variable which provides access to various contextual values.
+
+```javascript
+nest.at("$..vehicle", "console.log(@.value, @.path)")
+```
+
+The `@` pseudo-variable has these properties
+
+Property       | Description
+---------------|-------------
+`@.value`      | The value of the current node
+`@.nvalue`     | Non-vivifying version of `@.value` (see below)
+`@.parent`     | The parent of the current node
+`@.pathArray`  | The path to the current node as an array `["$", "books", 0, "author"]`
+`@.pathString` | The path to the current node as a string
+`@.path`       | The path as either an array or a string depending on the ambient `string` pragma
+
+When `@.value` is used on the left hand side of an assignment it tells the code generator to
+vivify as far as possible the path leading up to this node. If vivifaction is not desired
+the code may assign to `@.nvalue` instead.
+
+```javascript
+nest.at("$..flags.seen", "@.value = true");  // create `seen`
+nest.at("$..flags.seen", "@.nvalue = true"); // only sets exists `seen`
+```
 
 ## License
 
