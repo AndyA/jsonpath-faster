@@ -544,7 +544,7 @@ the code may assign to `@.nvalue` instead.
 
 ```javascript
 nest.at("$..flags.seen", "@.value = true");  // create `seen`
-nest.at("$..flags.seen", "@.nvalue = true"); // only sets exists `seen`
+nest.at("$..flags.seen", "@.nvalue = true"); // only sets existing `seen`
 ```
 
 ## License
