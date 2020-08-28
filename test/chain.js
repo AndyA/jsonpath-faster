@@ -45,3 +45,6 @@ const want = {
 };
 
 tap.same({ empty, leaves, inners }, want, `pragma chain`);
+
+const tips = jp.leaf.string`$..*`.paths(obj);
+tap.same(tips, want.leaves, `pragma chain + template`);
