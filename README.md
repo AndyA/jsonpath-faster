@@ -481,11 +481,13 @@ nest.visitor("$..*", (value, path) => {
 
 ## Nest methods
 
-#### jp.nest()
+#### jp.nest([path])
 
 Creates a new, empty nest. Actions may be added using its `visitor`, `mutator`,
 `setter` and `at` methods. Having added actions the nest may be called as
 a function to apply the actions to an object.
+
+If `path` is supplied it will be used as a prefix for all the paths in the nest.
 
 ```javascript
 const nest = jp.nest();
