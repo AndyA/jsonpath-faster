@@ -32,7 +32,8 @@ exports[`test/vivifiers.js TAP > $.foo.bar, $.foo.baz 1`] = `
       "value": "$"
     },
     "vivify": true,
-    "vv": "{}"
+    "vv": "{}",
+    "pragmas": {}
   },
   {
     "expression": {
@@ -42,7 +43,8 @@ exports[`test/vivifiers.js TAP > $.foo.bar, $.foo.baz 1`] = `
     "scope": "child",
     "operation": "member",
     "vivify": true,
-    "vv": "{}"
+    "vv": "{}",
+    "pragmas": {}
   },
   {
     "scope": "internal",
@@ -85,7 +87,8 @@ exports[`test/vivifiers.js TAP > $.foo.bar, $.foo.baz[0].id, $.foo.baz[2].id 1`]
       "value": "$"
     },
     "vivify": true,
-    "vv": "{}"
+    "vv": "{}",
+    "pragmas": {}
   },
   {
     "expression": {
@@ -95,7 +98,8 @@ exports[`test/vivifiers.js TAP > $.foo.bar, $.foo.baz[0].id, $.foo.baz[2].id 1`]
     "scope": "child",
     "operation": "member",
     "vivify": true,
-    "vv": "{}"
+    "vv": "{}",
+    "pragmas": {}
   },
   {
     "scope": "internal",
@@ -122,7 +126,8 @@ exports[`test/vivifiers.js TAP > $.foo.bar, $.foo.baz[0].id, $.foo.baz[2].id 1`]
           "scope": "child",
           "operation": "member",
           "vivify": true,
-          "vv": "[]"
+          "vv": "[]",
+          "pragmas": {}
         },
         {
           "scope": "internal",
