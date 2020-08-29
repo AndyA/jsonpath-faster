@@ -216,7 +216,8 @@ exports[`test/merge.js TAP > mergeTrees merges forked ASTs #2 1`] = `
                   "operation": "member"
                 }
               ]
-            ]
+            ],
+            "pragmas": {}
           }
         ],
         [
@@ -252,10 +253,12 @@ exports[`test/merge.js TAP > mergeTrees merges forked ASTs #2 1`] = `
                   "operation": "member"
                 }
               ]
-            ]
+            ],
+            "pragmas": {}
           }
         ]
-      ]
+      ],
+      "pragmas": {}
     }
   ]
 }
@@ -302,7 +305,8 @@ exports[`test/merge.js TAP > mergeTrees merges simple ASTs 1`] = `
             "operation": "member"
           }
         ]
-      ]
+      ],
+      "pragmas": {}
     }
   ],
   "a2": [
@@ -344,7 +348,8 @@ exports[`test/merge.js TAP > mergeTrees merges simple ASTs 1`] = `
             "operation": "member"
           }
         ]
-      ]
+      ],
+      "pragmas": {}
     }
   ]
 }
@@ -390,7 +395,8 @@ exports[`test/merge.js TAP > renderTree renders forks 1`] = `
           "operation": "member"
         }
       ]
-    ]
+    ],
+    "pragmas": {}
   }
 ]
 `

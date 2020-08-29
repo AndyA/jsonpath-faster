@@ -71,7 +71,8 @@ exports[`test/vivifiers.js TAP > $.foo.bar, $.foo.baz 1`] = `
           "vivify": true
         }
       ]
-    ]
+    ],
+    "pragmas": {}
   }
 ]
 `
@@ -170,10 +171,12 @@ exports[`test/vivifiers.js TAP > $.foo.bar, $.foo.baz[0].id, $.foo.baz[2].id 1`]
                 "vivify": true
               }
             ]
-          ]
+          ],
+          "pragmas": {}
         }
       ]
-    ]
+    ],
+    "pragmas": {}
   }
 ]
 `
