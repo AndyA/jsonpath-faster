@@ -37,7 +37,8 @@ exports[`test/merge.js TAP > makeTree parses forks 1`] = `
       "expression": {
         "type": "root",
         "value": "$"
-      }
+      },
+      "pragmas": {}
     },
     "next": [
       {
@@ -47,7 +48,8 @@ exports[`test/merge.js TAP > makeTree parses forks 1`] = `
             "value": "foo"
           },
           "scope": "child",
-          "operation": "member"
+          "operation": "member",
+          "pragmas": {}
         },
         "next": [
           {
@@ -57,7 +59,8 @@ exports[`test/merge.js TAP > makeTree parses forks 1`] = `
                 "value": "foo"
               },
               "scope": "child",
-              "operation": "member"
+              "operation": "member",
+              "pragmas": {}
             }
           },
           {
@@ -67,7 +70,8 @@ exports[`test/merge.js TAP > makeTree parses forks 1`] = `
                 "value": "bar"
               },
               "scope": "child",
-              "operation": "member"
+              "operation": "member",
+              "pragmas": {}
             }
           }
         ]
@@ -85,7 +89,8 @@ exports[`test/merge.js TAP > mergeTrees merges forked ASTs #1 1`] = `
         "expression": {
           "type": "root",
           "value": "$"
-        }
+        },
+        "pragmas": {}
       },
       "next": [
         {
@@ -95,7 +100,8 @@ exports[`test/merge.js TAP > mergeTrees merges forked ASTs #1 1`] = `
               "value": "foo"
             },
             "scope": "child",
-            "operation": "member"
+            "operation": "member",
+            "pragmas": {}
           },
           "next": [
             {
@@ -105,7 +111,8 @@ exports[`test/merge.js TAP > mergeTrees merges forked ASTs #1 1`] = `
                   "value": "foo"
                 },
                 "scope": "child",
-                "operation": "member"
+                "operation": "member",
+                "pragmas": {}
               }
             },
             {
@@ -115,7 +122,8 @@ exports[`test/merge.js TAP > mergeTrees merges forked ASTs #1 1`] = `
                   "value": "bar"
                 },
                 "scope": "child",
-                "operation": "member"
+                "operation": "member",
+                "pragmas": {}
               }
             }
           ]
@@ -129,7 +137,8 @@ exports[`test/merge.js TAP > mergeTrees merges forked ASTs #1 1`] = `
         "expression": {
           "type": "root",
           "value": "$"
-        }
+        },
+        "pragmas": {}
       },
       "next": [
         {
@@ -139,7 +148,8 @@ exports[`test/merge.js TAP > mergeTrees merges forked ASTs #1 1`] = `
               "value": "bar"
             },
             "scope": "child",
-            "operation": "member"
+            "operation": "member",
+            "pragmas": {}
           },
           "next": [
             {
@@ -149,7 +159,8 @@ exports[`test/merge.js TAP > mergeTrees merges forked ASTs #1 1`] = `
                   "value": "foo"
                 },
                 "scope": "child",
-                "operation": "member"
+                "operation": "member",
+                "pragmas": {}
               }
             },
             {
@@ -159,7 +170,8 @@ exports[`test/merge.js TAP > mergeTrees merges forked ASTs #1 1`] = `
                   "value": "bar"
                 },
                 "scope": "child",
-                "operation": "member"
+                "operation": "member",
+                "pragmas": {}
               }
             }
           ]
@@ -177,7 +189,8 @@ exports[`test/merge.js TAP > mergeTrees merges forked ASTs #2 1`] = `
       "expression": {
         "type": "root",
         "value": "$"
-      }
+      },
+      "pragmas": {}
     },
     {
       "scope": "internal",
@@ -190,7 +203,8 @@ exports[`test/merge.js TAP > mergeTrees merges forked ASTs #2 1`] = `
               "value": "foo"
             },
             "scope": "child",
-            "operation": "member"
+            "operation": "member",
+            "pragmas": {}
           },
           {
             "scope": "internal",
@@ -203,7 +217,8 @@ exports[`test/merge.js TAP > mergeTrees merges forked ASTs #2 1`] = `
                     "value": "foo"
                   },
                   "scope": "child",
-                  "operation": "member"
+                  "operation": "member",
+                  "pragmas": {}
                 }
               ],
               [
@@ -213,7 +228,8 @@ exports[`test/merge.js TAP > mergeTrees merges forked ASTs #2 1`] = `
                     "value": "bar"
                   },
                   "scope": "child",
-                  "operation": "member"
+                  "operation": "member",
+                  "pragmas": {}
                 }
               ]
             ],
@@ -227,7 +243,8 @@ exports[`test/merge.js TAP > mergeTrees merges forked ASTs #2 1`] = `
               "value": "bar"
             },
             "scope": "child",
-            "operation": "member"
+            "operation": "member",
+            "pragmas": {}
           },
           {
             "scope": "internal",
@@ -240,7 +257,8 @@ exports[`test/merge.js TAP > mergeTrees merges forked ASTs #2 1`] = `
                     "value": "foo"
                   },
                   "scope": "child",
-                  "operation": "member"
+                  "operation": "member",
+                  "pragmas": {}
                 }
               ],
               [
@@ -250,7 +268,8 @@ exports[`test/merge.js TAP > mergeTrees merges forked ASTs #2 1`] = `
                     "value": "bar"
                   },
                   "scope": "child",
-                  "operation": "member"
+                  "operation": "member",
+                  "pragmas": {}
                 }
               ]
             ],
@@ -271,7 +290,8 @@ exports[`test/merge.js TAP > mergeTrees merges simple ASTs 1`] = `
       "expression": {
         "type": "root",
         "value": "$"
-      }
+      },
+      "pragmas": {}
     },
     {
       "expression": {
@@ -279,7 +299,8 @@ exports[`test/merge.js TAP > mergeTrees merges simple ASTs 1`] = `
         "value": "foo"
       },
       "scope": "child",
-      "operation": "member"
+      "operation": "member",
+      "pragmas": {}
     },
     {
       "scope": "internal",
@@ -292,7 +313,8 @@ exports[`test/merge.js TAP > mergeTrees merges simple ASTs 1`] = `
               "value": "foo"
             },
             "scope": "child",
-            "operation": "member"
+            "operation": "member",
+            "pragmas": {}
           }
         ],
         [
@@ -302,7 +324,8 @@ exports[`test/merge.js TAP > mergeTrees merges simple ASTs 1`] = `
               "value": "bar"
             },
             "scope": "child",
-            "operation": "member"
+            "operation": "member",
+            "pragmas": {}
           }
         ]
       ],
@@ -314,7 +337,8 @@ exports[`test/merge.js TAP > mergeTrees merges simple ASTs 1`] = `
       "expression": {
         "type": "root",
         "value": "$"
-      }
+      },
+      "pragmas": {}
     },
     {
       "expression": {
@@ -322,7 +346,8 @@ exports[`test/merge.js TAP > mergeTrees merges simple ASTs 1`] = `
         "value": "bar"
       },
       "scope": "child",
-      "operation": "member"
+      "operation": "member",
+      "pragmas": {}
     },
     {
       "scope": "internal",
@@ -335,7 +360,8 @@ exports[`test/merge.js TAP > mergeTrees merges simple ASTs 1`] = `
               "value": "foo"
             },
             "scope": "child",
-            "operation": "member"
+            "operation": "member",
+            "pragmas": {}
           }
         ],
         [
@@ -345,7 +371,8 @@ exports[`test/merge.js TAP > mergeTrees merges simple ASTs 1`] = `
               "value": "bar"
             },
             "scope": "child",
-            "operation": "member"
+            "operation": "member",
+            "pragmas": {}
           }
         ]
       ],
@@ -361,7 +388,8 @@ exports[`test/merge.js TAP > renderTree renders forks 1`] = `
     "expression": {
       "type": "root",
       "value": "$"
-    }
+    },
+    "pragmas": {}
   },
   {
     "expression": {
@@ -369,7 +397,8 @@ exports[`test/merge.js TAP > renderTree renders forks 1`] = `
       "value": "foo"
     },
     "scope": "child",
-    "operation": "member"
+    "operation": "member",
+    "pragmas": {}
   },
   {
     "scope": "internal",
@@ -382,7 +411,8 @@ exports[`test/merge.js TAP > renderTree renders forks 1`] = `
             "value": "foo"
           },
           "scope": "child",
-          "operation": "member"
+          "operation": "member",
+          "pragmas": {}
         }
       ],
       [
@@ -392,7 +422,8 @@ exports[`test/merge.js TAP > renderTree renders forks 1`] = `
             "value": "bar"
           },
           "scope": "child",
-          "operation": "member"
+          "operation": "member",
+          "pragmas": {}
         }
       ]
     ],
