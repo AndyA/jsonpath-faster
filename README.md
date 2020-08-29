@@ -428,7 +428,7 @@ nest
   .visitor("$.assets[*]..meta.modified", value => {});
 ```
 
-This can be written more concisely using `nest`.
+This can be written more concisely using a nested `nest`.
 
 ```javascript
 nest
