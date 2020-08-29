@@ -4,7 +4,7 @@ const tap = require("tap");
 
 const _ = require("lodash");
 const jp = require("..");
-const { vivifyTokens } = require("../lib/compilers/vivifiers");
+const { vivifyTokens } = require("../lib/compiler/vivifiers");
 
 const sets = [
   "$..id",

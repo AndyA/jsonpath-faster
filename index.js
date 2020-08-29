@@ -4,9 +4,9 @@ const Compiler = require("./lib/compiler");
 const Cache = require("./lib/compat/cache");
 const addPragmas = require("./lib/pragmas");
 
-const selectorCompiler = require("./lib/compilers/selectors");
-const callbackCompiler = require("./lib/compilers/callback");
-const lib = require("./lib/compilers/lib");
+const selectorCompiler = require("./lib/compiler/selectors");
+const callbackCompiler = require("./lib/compiler/callback");
+const lib = require("./lib/compiler/lib");
 
 function JSONPath() {
   const compiler = new Compiler(callbackCompiler, selectorCompiler, lib);
