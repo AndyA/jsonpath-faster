@@ -27,6 +27,12 @@ tap.test(`makeTree`, async () => {
   tap.matchSnapshot(tx, `makeTree parses forks`);
 });
 
+tap.test(`renderTree`, async () => {
+  const ast = jp.parse("$..foo[($.idx)].id");
+  const tree = makeTree(ast);
+  tap.same(renderTree(tree), ast, `renderTree round trips`);
+});
+
 tap.test(`mergeTrees`, async () => {
   const [t1, t2, t3, t4] = [
     "$.foo.foo",
