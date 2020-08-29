@@ -27,7 +27,7 @@ const nest = jp.nest();
 //  .visitor("$.assets[*]..meta.modified", value => {});
 
 nest
-  .prefix("$.assets[*]..meta")
+  .nest("$.assets[*]..meta")
   .visitor("$.id", value => {})
   .visitor("$.author", value => {})
   .visitor("$.modified", value => {});

@@ -428,11 +428,11 @@ nest
   .visitor("$.assets[*]..meta.modified", value => {});
 ```
 
-This can be written more concisely using `prefix`.
+This can be written more concisely using `nest`.
 
 ```javascript
 nest
-  .prefix("$.assets[*]..meta")
+  .nest("$.assets[*]..meta")
   .visitor("$.id", value => {})
   .visitor("$.author", value => {})
   .visitor("$.modified", value => {});
@@ -581,13 +581,13 @@ nest.at("$..flags.seen", "@.value = true");  // create `seen`
 nest.at("$..flags.seen", "@.nvalue = true"); // only sets existing `seen`
 ```
 
-#### nest.prefix(path)
+#### nest.nest(path)
 
 Add a prefix path for this call chain.
 
 ```javascript
 nest
-  .prefix("$.assets[*]..meta")
+  .nest("$.assets[*]..meta")
   .visitor("$.id", value => {})
   .visitor("$.author", value => {})
   .visitor("$.modified", value => {});

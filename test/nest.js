@@ -92,7 +92,7 @@ tap.test(`Nest`, async () => {
   tap.test(`Actions`, async () => {
     const mp = jp.nest();
 
-    mp.prefix("$.foo")
+    mp.nest("$.foo")
       .at("$.bar", `$.log.push([@.value, @.path]);`)
       .at("$.baz", `$.log.push([@.value]);`)
       .at("$.bof[0].meta.control", `@.value = true;`);
@@ -143,6 +143,31 @@ tap.test(`Nest`, async () => {
     };
 
     tap.same($, want, `natural ordering of Nest`);
+  });
+
+  tap.test(`Nesting nests`, async () => {
+    const obj = {
+      foo: {
+        bum: { ok: true },
+        bar: { bof: [1, 2, 3], baz: { a: 1, b: 2, c: 3 } }
+      }
+    };
+
+    const want = {
+      foo: {
+        bum: { ok: true },
+        bar: { bof: [1, 2, 3], baz: { a: 1, b: 2, c: 3 }, bok: true },
+        meta: { valid: true }
+      }
+    };
+
+    const nest = jp.nest("$.foo");
+    nest
+      .setter("$.meta.valid", true)
+      .nest("$.bar")
+      .setter("$.bok", true);
+    nest(obj);
+    tap.same(obj, want, `nested nests`);
   });
 
   tap.test(`Misc`, async () => {

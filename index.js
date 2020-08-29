@@ -30,9 +30,10 @@ function JSONPath() {
     };
 
     return Object.assign(jp, proto, { JSONPath }, cache, {
-      nest() {
+      nest(path) {
         const { Nest } = require("./lib/nest");
-        return new Nest(this);
+        const mountPoint = path ? jp.parse(path) : [];
+        return new Nest(this, mountPoint);
       }
     });
   };
