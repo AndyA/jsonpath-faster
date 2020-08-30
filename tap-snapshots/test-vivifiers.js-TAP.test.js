@@ -32,7 +32,10 @@ exports[`test/vivifiers.js TAP > $.foo.bar, $.foo.baz 1`] = `
       "value": "$"
     },
     "vivify": true,
-    "vv": "{}"
+    "vv": "{}",
+    "pragmas": {
+      "unordered": false
+    }
   },
   {
     "expression": {
@@ -42,7 +45,10 @@ exports[`test/vivifiers.js TAP > $.foo.bar, $.foo.baz 1`] = `
     "scope": "child",
     "operation": "member",
     "vivify": true,
-    "vv": "{}"
+    "vv": "{}",
+    "pragmas": {
+      "unordered": false
+    }
   },
   {
     "scope": "internal",
@@ -71,7 +77,10 @@ exports[`test/vivifiers.js TAP > $.foo.bar, $.foo.baz 1`] = `
           "vivify": true
         }
       ]
-    ]
+    ],
+    "pragmas": {
+      "unordered": false
+    }
   }
 ]
 `
@@ -84,7 +93,10 @@ exports[`test/vivifiers.js TAP > $.foo.bar, $.foo.baz[0].id, $.foo.baz[2].id 1`]
       "value": "$"
     },
     "vivify": true,
-    "vv": "{}"
+    "vv": "{}",
+    "pragmas": {
+      "unordered": false
+    }
   },
   {
     "expression": {
@@ -94,7 +106,10 @@ exports[`test/vivifiers.js TAP > $.foo.bar, $.foo.baz[0].id, $.foo.baz[2].id 1`]
     "scope": "child",
     "operation": "member",
     "vivify": true,
-    "vv": "{}"
+    "vv": "{}",
+    "pragmas": {
+      "unordered": false
+    }
   },
   {
     "scope": "internal",
@@ -121,7 +136,10 @@ exports[`test/vivifiers.js TAP > $.foo.bar, $.foo.baz[0].id, $.foo.baz[2].id 1`]
           "scope": "child",
           "operation": "member",
           "vivify": true,
-          "vv": "[]"
+          "vv": "[]",
+          "pragmas": {
+            "unordered": false
+          }
         },
         {
           "scope": "internal",
@@ -170,10 +188,16 @@ exports[`test/vivifiers.js TAP > $.foo.bar, $.foo.baz[0].id, $.foo.baz[2].id 1`]
                 "vivify": true
               }
             ]
-          ]
+          ],
+          "pragmas": {
+            "unordered": false
+          }
         }
       ]
-    ]
+    ],
+    "pragmas": {
+      "unordered": false
+    }
   }
 ]
 `
