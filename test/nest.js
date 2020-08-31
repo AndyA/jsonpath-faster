@@ -125,13 +125,8 @@ tap.test(`Nest`, async () => {
     const paths = ["$.foo.bar", "$.foo.baz"];
     const obj = { foo: { bar: "Hello", baz: "Bye!" } };
 
-    for (const path of paths) {
-      const ast = jp.parse(path);
-      nest.addTree([
-        ...ast,
-        makeTerminal(`$.log.push([@.value, @.pathString])`)
-      ]);
-    }
+    for (const path of paths)
+      nest.at(path, `$.log.push([@.value, @.pathString])`);
 
     const $ = { log: [] };
     nest(obj, $);
