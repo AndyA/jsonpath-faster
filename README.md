@@ -355,7 +355,7 @@ nest(data); // the nest is a function
 // All prices increased by 10%, survey and authors arrays populated
 ```
 
-Calling the nest function runs all the actions that you have registered with the nest. Actions with paths that share a common prefix are efficiently compiled so that the prefix is traversed only once. In the following  example the code to traverse `$.assets[*]..meta` is executed only once for each call `nest()`
+Calling the nest function runs all the actions that you have registered with the nest. Actions with paths that share a common prefix are efficiently compiled so that the prefix is traversed only once. In the following  example the code to traverse `$.assets[*]..meta` is executed only once for each call to `nest()`
 
 ```javascript
 nest
