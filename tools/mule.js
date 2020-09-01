@@ -4,53 +4,18 @@ const inspect = require("../lib/inspect");
 const jp = require("..");
 const prettier = require("prettier");
 
-const data = require("../test/upstream/data/store");
-
-const showCode = code => {
-  const pretty = prettier.format(`module.exports = ${code}`, {
-    filepath: "code.js"
-  });
+jp.compiler.on("compile", info => {
+  const pretty = prettier.format(info.code, { filepath: "code.js" });
   console.log(pretty);
+});
+
+var data = {
+  a: 1,
+  b: 2,
+  c: 3,
+  z: {
+    a: 100,
+    b: 200
+  }
 };
-
-const survey = [];
-const authors = [];
-const nest = jp.nest();
-//nest
-//  .visitor("$..*", (value, path) => survey.push({ value, path }))
-//  .visitor("$..author", value => authors.push(value))
-//  .mutator("$..price", value => value * 1.1);
-
-//nest
-//  .visitor("$.assets[*]..meta.id", value => {})
-//  .visitor("$.assets[*]..meta.author", value => {})
-//  .visitor("$.assets[*]..meta.modified", value => {});
-
-nest
-  .nest("$.assets[*]..meta")
-  .visitor("$.id", value => {})
-  .visitor("$.author", value => {})
-  .visitor("$.modified", value => {});
-
-//nest(data);
-//console.log(inspect(data));
-
-//const nest = jp.string.nest();
-
-//nest.interior.visitor("$..*", value => console.log(value));
-//nest.leaf.visitor("$..*", (value, path) => console.log(`${path}: ${value}`));
-
-//nest(data);
-//console.log(survey, authors);
-
-//showCode(nest.code());
-
-//nest
-//  .mutator("$..thing.seen", true)
-//  .visitor("$..seen", (value, path) => console.log(`Seen at ${path}`));
-
-nest.leaf.string.visitor("$..*", (value, path) =>
-  console.log(`${path}: ${value}`)
-);
-
-nest(data);
+var parent = jp.parent(data, "$.z.b");

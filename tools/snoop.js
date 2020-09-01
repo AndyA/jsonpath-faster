@@ -9,8 +9,6 @@ const { js } = require("../lib/util");
 const getWorkers = require("../benchmark/lib/worker");
 const spec = require("../benchmark/spec");
 
-const things = ["jsonpath", "baseline", "HEAD"];
-
 function runSuite(suite) {
   return suite
     .on("cycle", function(event) {
