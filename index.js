@@ -5,11 +5,11 @@ const Cache = require("./lib/compat/cache");
 const addPragmas = require("./lib/pragmas");
 
 const selectorCompiler = require("./lib/compiler/selectors");
-const callbackCompiler = require("./lib/compiler/callback");
+const structureCompiler = require("./lib/compiler/structure");
 const lib = require("./lib/compiler/lib");
 
 function JSONPath() {
-  const compiler = new Compiler(callbackCompiler, selectorCompiler, lib);
+  const compiler = new Compiler(structureCompiler, selectorCompiler, lib);
 
   const construct = proto => {
     const cache = new Cache(compiler);
