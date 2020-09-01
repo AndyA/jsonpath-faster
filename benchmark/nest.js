@@ -36,9 +36,27 @@ function nest(count, paths) {
   };
 }
 
+const wilden = path => path.replace(/\[\d+\]/g, "[*]");
+
+const unionPaths = [
+  "$.store.book[0,1,2,3].category",
+  "$.store.book[0,1,2,3].author",
+  "$.store.book[0,1,2,3].title",
+  "$.store.book[0,1,2,3].price",
+  "$.store.bicycle.color",
+  "$.store.bicycle.price"
+];
+
+const leafPaths = jp.string.leaf.paths(spec.obj, "$..*");
+
+const wildPaths = _.uniq(leafPaths.map(wilden));
+
 const tests = [
+  { name: "search", paths: ["$..*"] },
   { name: "multipath", paths: spec.paths },
-  { name: "search", paths: ["$..*"] }
+  { name: "leafs", paths: leafPaths },
+  { name: "wild leafs", paths: wildPaths },
+  { name: "union leafs", paths: unionPaths }
 ];
 
 for (const count of [1, 10, 100, 1000]) {
