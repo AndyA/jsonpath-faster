@@ -3,12 +3,13 @@
 const tap = require("tap");
 const jp = require("..");
 const { makeTerminal } = require("../lib/tokens");
+const _ = require("lodash");
 
 tap.test(`conformance`, async () => {
   const obj = require("./upstream/data/store");
   const paths = require("./data/paths");
 
-  const want = paths.flatMap(path => jp.nodes(obj, path));
+  const want = _.flatMap(paths, path => jp.nodes(obj, path));
   const mp = jp.nest();
   const got = [];
   for (const path of paths)
