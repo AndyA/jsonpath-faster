@@ -254,6 +254,15 @@ jp.apply(data, '$..author', function(value, path) { console.log(value) });
 // J. R. R. Tolkien
 ```
 
+### jp.visit(obj, pathExpression, fn[, $])
+
+Very similar to `apply` but instead of returning the list of visited nodes it returns the passed `obj` - which may have been updated by `fn`. This makes it possible to vivify an empty `obj`. None of the other methods are able to assign directly to `obj`.
+
+```javascript
+const obj = jp.visit(undefined, "$", () => "Hello");
+// obj is "Hello"
+```
+
 ### jp.parse(pathExpression)
 
 Parse the provided JSONPath expression into path components and their associated operations.
