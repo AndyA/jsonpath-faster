@@ -166,6 +166,18 @@ tap.test(`Nest`, async () => {
     tap.same(obj, want, `nested nests`);
   });
 
+  tap.test(`Context`, async () => {
+    const nest = jp.nest().string;
+    nest.visitor(
+      "$.ident",
+      (value, path, $) => ($.obj = jp.visit($.obj, "$.id", () => value))
+    );
+    const doc = { ident: "ABC", id: "DEF" };
+    const $ = {};
+    nest(doc, $);
+    tap.same($, { obj: { id: "ABC" } }, "context passed");
+  });
+
   tap.test(`Misc`, async () => {
     const mp = jp.nest().setter("$", { empty: false });
     const obj = mp(undefined);

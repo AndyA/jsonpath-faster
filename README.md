@@ -447,7 +447,7 @@ const obj = mp(undefined);
 
 ### nest.visitor(path, fn)
 
-Register a visitor function that will be called for each matching node in the object. The function is called with two arguments: value and path.
+Register a visitor function that will be called for each matching node in the object. The function is called with three arguments: value and path and any `$` context that was passed to the nest function..
 
 ```javascript
 nest.string.visitor("$..books[*].authors[(@.length - 1)].name",
