@@ -178,6 +178,15 @@ tap.test(`Nest`, async () => {
     tap.same($, { obj: { id: "ABC" } }, "context passed");
   });
 
+  tap.test(`Too many args`, async () => {
+    const nest = jp.nest();
+    tap.throws(
+      () => nest.visitor("$..*", (v, p, $, x) => {}),
+      /too many/i,
+      "Too many args"
+    );
+  });
+
   tap.test(`Misc`, async () => {
     const mp = jp.nest().setter("$", { empty: false });
     const obj = mp(undefined);
