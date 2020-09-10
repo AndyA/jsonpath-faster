@@ -85,7 +85,7 @@ JSONPath           | Description
 `$`                | The root object/element
 `@`                | The current object/element
 `.`                | Child member operator
-`..`               | Recursive descendant operator; JSONPath borrows this syntax from E4X
+`..`               | Recursive descendant operator
 `*`                | Wildcard matching all objects/elements regardless their names
 `[]`               | Subscript operator
 `[,]`              | Union operator for alternate names or array indices as a set
