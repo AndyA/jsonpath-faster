@@ -451,7 +451,7 @@ Register a visitor function that will be called for each matching node in the ob
 
 ```javascript
 nest.string.visitor("$..books[*].authors[(@.length - 1)].name",
-  (value, path) => console.log(`${path}: ${value}`));
+  (value, path, $) => console.log(`${path}: ${value}`));
 ```
 
 If you don't need the path provide a function that accepts only a single value argument; the generated code is slightly faster if it doesn't have to track the path as it traverses the object.
