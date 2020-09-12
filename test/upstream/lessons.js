@@ -1,7 +1,7 @@
 // automatically translated from node_modules/jsonpath/test/lessons.js
 const tap = require("tap");
 var assert = require("assert");
-var jp = require("../../");
+var jp = require("../../").strict;
 var data = require("./data/store.json");
 tap.test("orig-google-code-issues", async function () {
   tap.test("comma in eval", async function () {

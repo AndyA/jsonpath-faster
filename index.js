@@ -38,8 +38,10 @@ function JSONPath() {
     });
   };
 
-  return addPragmas(construct({}), ["leaf", "interior", "string"], obj =>
-    construct(obj)
+  return addPragmas(
+    construct({}),
+    ["leaf", "interior", "string", "strict"],
+    obj => construct(obj)
   );
 }
 

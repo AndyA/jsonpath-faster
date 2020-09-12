@@ -1,7 +1,7 @@
 // automatically translated from node_modules/jsonpath/test/stringify.js
 const tap = require("tap");
 var assert = require("assert");
-var jp = require("../../");
+var jp = require("../../").strict;
 tap.test("stringify", async function () {
   tap.test("simple path stringifies", async function () {
     var string = jp.stringify(["$", "a", "b", "c"]);

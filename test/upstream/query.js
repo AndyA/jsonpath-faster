@@ -1,7 +1,7 @@
 // automatically translated from node_modules/jsonpath/test/query.js
 const tap = require("tap");
 var assert = require("assert");
-var jp = require("../../");
+var jp = require("../../").strict;
 var data = require("./data/store.json");
 tap.test("query", async function () {
   tap.test("first-level member", async function () {
@@ -362,8 +362,8 @@ tap.test("query", async function () {
     async function () {
       var data = {
         authors: {
-          "1": "Herman Melville",
-          "2": "J. R. R. Tolkien",
+          1: "Herman Melville",
+          2: "J. R. R. Tolkien",
         },
       };
       var results = jp.nodes(data, "$.authors.1");

@@ -1,7 +1,7 @@
 // automatically translated from node_modules/jsonpath/test/parse.js
 const tap = require("tap");
 var assert = require("assert");
-var jp = require("../../");
+var jp = require("../../").strict;
 var util = require("util");
 tap.test("parse", async function () {
   tap.test("should parse root-only", async function () {

@@ -1,7 +1,7 @@
 // automatically translated from node_modules/jsonpath/test/sugar.js
 const tap = require("tap");
 var assert = require("assert");
-var jp = require("../../");
+var jp = require("../../").strict;
 var util = require("util");
 tap.test("sugar", async function () {
   tap.test("parent gets us parent value", async function () {

@@ -74,8 +74,18 @@ async function tapify(inFile, outFile, pathPrefix) {
             node.arguments.length === 1 &&
             node.arguments[0].type === "Literal"
           ) {
-            node.arguments[0].value = fixRequirePath(node.arguments[0].value);
-            return;
+            const req = node.arguments[0].value;
+            node.arguments[0].value = fixRequirePath(req);
+            // add .strict pragma to jsonpath require
+            if (req === ".." || req == "../") {
+              this.skip();
+              return {
+                computed: false,
+                object: node,
+                property: { name: "strict", type: "Identifier" },
+                type: "MemberExpression"
+              };
+            }
           }
         } else if (callee.type === "MemberExpression") {
           if (callee.object.name === "assert") {
