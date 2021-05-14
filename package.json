@@ -1,6 +1,6 @@
 {
   "name": "jsonpath-faster",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "description": "Query JavaScript objects with JSONPath expressions. Compiles and caches JSONpath to JS",
   "main": "index.js",
   "scripts": {
