@@ -2,7 +2,6 @@
 
 const tap = require("tap");
 const jp = require("..");
-const { makeTerminal } = require("../lib/tokens");
 const _ = require("lodash");
 
 tap.test(`conformance`, async () => {
@@ -121,6 +120,24 @@ tap.test(`Nest`, async () => {
     tap.same({ obj, $ }, want, `at`);
   });
 
+  tap.test(`Multiple paths`, async () => {
+    const mp = jp.nest();
+    mp.at(["$.foo", "$.bar"], `$.log.push([@.value, @.path])`);
+    const obj = { foo: 1, bar: 2 };
+    const $ = { log: [] };
+    mp(obj, $);
+    const want = {
+      obj: { foo: 1, bar: 2 },
+      $: {
+        log: [
+          [1, ["$", "foo"]],
+          [2, ["$", "bar"]]
+        ]
+      }
+    };
+    tap.same({ obj, $ }, want, `multipaths`);
+  });
+
   tap.test(`Natural ordering`, async () => {
     const nest = jp.nest();
     const paths = ["$.foo.bar", "$.foo.baz"];
@@ -158,10 +175,7 @@ tap.test(`Nest`, async () => {
     };
 
     const nest = jp.nest("$.foo");
-    nest
-      .setter("$.meta.valid", true)
-      .nest("$.bar")
-      .setter("$.bok", true);
+    nest.setter("$.meta.valid", true).nest("$.bar").setter("$.bok", true);
     nest(obj);
     tap.same(obj, want, `nested nests`);
   });

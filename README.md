@@ -11,29 +11,29 @@ It compiles JSONpath expressions into the corresponding Javascript and caches th
 
 Here are some comparative benchmarks. The first two numbers are operations per second. Each test involves a mix of `query`, `nodes` and `paths` with and without limiting counts.
 
-| JSONPath                    | jsonpath | jsonpath-faster | ratio  |
-| :--                         | --:      | --:             | --:    |
-| `$..*`                      | 101,974  |       2,321,381 |  19.12 |
-| `$..author`                 |  88,589  |       1,397,474 |  14.70 |
-| `$..[1]`                    |  71,301  |       1,567,123 |  18.91 |
-| `$.store..price`            |  64,265  |       1,485,605 |  21.17 |
-| `$..book[2]`                |  55,529  |       1,587,166 |  24.69 |
-| `$..book[:2]`               |  48,938  |       1,508,403 |  27.24 |
-| `$..book[?(@.isbn)]`        |  50,508  |       1,517,967 |  26.20 |
-| `$..book[-1:]`              |  47,421  |       1,518,481 |  28.17 |
-| `$..book[?(@.price==8.95)]` |  47,136  |       1,567,365 |  29.05 |
-| `$..book[0,1]`              |  42,022  |       1,562,645 |  32.96 |
-| `$..book[?(@.price<10)]`    |  46,786  |       1,586,545 |  29.48 |
-| `$..book[(@.length-1)]`     |  29,671  |       1,612,102 |  49.18 |
-| `$.*`                       | 182,293  |       9,010,209 |  49.51 |
-| `$.store`                   | 183,276  |       8,728,225 |  47.76 |
-| `$.store.*`                 |  95,512  |       5,338,002 |  55.93 |
-| `$.store[*]`                |  89,084  |       5,578,182 |  62.54 |
-| `$.store.bicycle`           |  99,969  |       8,550,540 |  85.52 |
-| `$.store.book[*].author`    |  50,153  |       6,814,045 | 135.63 |
-| `$.store.book.1`            |  73,105  |       8,764,344 | 119.91 |
-| `$.store.book[1]`           |  63,779  |       8,686,778 | 136.63 |
-| `$.store.bicycle["color"]`  |  59,106  |       8,244,142 | 139.54 |
+| JSONPath                    | jsonpath | jsonpath-faster |  ratio |
+| :-------------------------- | -------: | --------------: | -----: |
+| `$..*`                      |  101,974 |       2,321,381 |  19.12 |
+| `$..author`                 |   88,589 |       1,397,474 |  14.70 |
+| `$..[1]`                    |   71,301 |       1,567,123 |  18.91 |
+| `$.store..price`            |   64,265 |       1,485,605 |  21.17 |
+| `$..book[2]`                |   55,529 |       1,587,166 |  24.69 |
+| `$..book[:2]`               |   48,938 |       1,508,403 |  27.24 |
+| `$..book[?(@.isbn)]`        |   50,508 |       1,517,967 |  26.20 |
+| `$..book[-1:]`              |   47,421 |       1,518,481 |  28.17 |
+| `$..book[?(@.price==8.95)]` |   47,136 |       1,567,365 |  29.05 |
+| `$..book[0,1]`              |   42,022 |       1,562,645 |  32.96 |
+| `$..book[?(@.price<10)]`    |   46,786 |       1,586,545 |  29.48 |
+| `$..book[(@.length-1)]`     |   29,671 |       1,612,102 |  49.18 |
+| `$.*`                       |  182,293 |       9,010,209 |  49.51 |
+| `$.store`                   |  183,276 |       8,728,225 |  47.76 |
+| `$.store.*`                 |   95,512 |       5,338,002 |  55.93 |
+| `$.store[*]`                |   89,084 |       5,578,182 |  62.54 |
+| `$.store.bicycle`           |   99,969 |       8,550,540 |  85.52 |
+| `$.store.book[*].author`    |   50,153 |       6,814,045 | 135.63 |
+| `$.store.book.1`            |   73,105 |       8,764,344 | 119.91 |
+| `$.store.book[1]`           |   63,779 |       8,686,778 | 136.63 |
+| `$.store.bicycle["color"]`  |   59,106 |       8,244,142 | 139.54 |
 
 With longer paths the speed advantage increases. You can also use [Nests](#nests) to combine multiple JSONpaths and corresponding actions into a single function eliminating the redundancy of scanning the same parts of an object multiple times.
 
@@ -43,7 +43,7 @@ For most purposes `jsonpath-faster` will be a drop in replacement for `jsonpath`
 
 ### Compatibility
 
-In addition to its own test suite `jsonpath-faster` passes all of `jsonpath`'s tests. 
+In addition to its own test suite `jsonpath-faster` passes all of `jsonpath`'s tests.
 
 There are two known differences (and quite a few extensions):
 
@@ -57,14 +57,14 @@ This section of the documentation is copied directly from [jsonpath](https://www
 
 ```javascript
 var cities = [
-  { name: "London", "population": 8615246 },
-  { name: "Berlin", "population": 3517424 },
-  { name: "Madrid", "population": 3165235 },
-  { name: "Rome",   "population": 2870528 }
+  { name: "London", population: 8615246 },
+  { name: "Berlin", population: 3517424 },
+  { name: "Madrid", population: 3165235 },
+  { name: "Rome", population: 2870528 }
 ];
 
-var jp = require('jsonpath-faster');
-var names = jp.query(cities, '$..name');
+var jp = require("jsonpath-faster");
+var names = jp.query(cities, "$..name");
 
 // [ "London", "Berlin", "Madrid", "Rome" ]
 ```
@@ -72,6 +72,7 @@ var names = jp.query(cities, '$..name');
 ## Install
 
 Install from npm:
+
 ```bash
 $ npm install jsonpath-faster
 ```
@@ -80,25 +81,25 @@ $ npm install jsonpath-faster
 
 Here are syntax and examples adapted from [Stefan Goessner's original post](http://goessner.net/articles/JsonPath/) introducing JSONPath in 2007.
 
-JSONPath           | Description
--------------------|------------
-`$`                | The root object/element
-`@`                | The current object/element
-`.`                | Child member operator
-`..`               | Recursive descendant operator
-`*`                | Wildcard matching all objects/elements regardless their names
-`[]`               | Subscript operator
-`[,]`              | Union operator for alternate names or array indices as a set
-`[start:end:step]` | Array slice operator borrowed from ES4 / Python
-`?()`              | Applies a filter (script) expression via static evaluation
-`()`	           | Script expression via static evaluation 
+| JSONPath           | Description                                                   |
+| ------------------ | ------------------------------------------------------------- |
+| `$`                | The root object/element                                       |
+| `@`                | The current object/element                                    |
+| `.`                | Child member operator                                         |
+| `..`               | Recursive descendant operator                                 |
+| `*`                | Wildcard matching all objects/elements regardless their names |
+| `[]`               | Subscript operator                                            |
+| `[,]`              | Union operator for alternate names or array indices as a set  |
+| `[start:end:step]` | Array slice operator borrowed from ES4 / Python               |
+| `?()`              | Applies a filter (script) expression via static evaluation    |
+| `()`               | Script expression via static evaluation                       |
 
 Given this sample data set, see example expressions below:
 
 ```javascript
 {
   "store": {
-    "book": [ 
+    "book": [
       {
         "category": "reference",
         "author": "Nigel Rees",
@@ -133,31 +134,31 @@ Given this sample data set, see example expressions below:
 
 Example JSONPath expressions:
 
-JSONPath                                          | Description
---------------------------------------------------|------------
-`$.store.book[*].author`                          | The authors of all books in the store
-`$..author`                                       | All authors
-`$.store.*`                                       | All things in store, which are some books and a red bicycle
-`$.store..price`                                  | The price of everything in the store
-`$..book[2]`                                      | The third book
-`$..book[(@.length-1)]`                           | The last book via script subscript
-`$..book[-1:]`                                    | The last book via slice
-`$..book[0,1]`                                    | The first two books via subscript union
-`$..book[:2]`                                     | The first two books via subscript array slice
-`$..book[?(@.isbn)]`                              | Filter all books with isbn number
-`$..book[?(@.price<10)]`                          | Filter all books cheaper than 10
-`$..book[?(@.price==8.95)]`                       | Filter all books that cost 8.95
-`$..book[?(@.price<30 && @.category=="fiction")]` | Filter all fiction books cheaper than 30
-`$..*`                                            | All members of JSON structure
+| JSONPath                                          | Description                                                 |
+| ------------------------------------------------- | ----------------------------------------------------------- |
+| `$.store.book[*].author`                          | The authors of all books in the store                       |
+| `$..author`                                       | All authors                                                 |
+| `$.store.*`                                       | All things in store, which are some books and a red bicycle |
+| `$.store..price`                                  | The price of everything in the store                        |
+| `$..book[2]`                                      | The third book                                              |
+| `$..book[(@.length-1)]`                           | The last book via script subscript                          |
+| `$..book[-1:]`                                    | The last book via slice                                     |
+| `$..book[0,1]`                                    | The first two books via subscript union                     |
+| `$..book[:2]`                                     | The first two books via subscript array slice               |
+| `$..book[?(@.isbn)]`                              | Filter all books with isbn number                           |
+| `$..book[?(@.price<10)]`                          | Filter all books cheaper than 10                            |
+| `$..book[?(@.price==8.95)]`                       | Filter all books that cost 8.95                             |
+| `$..book[?(@.price<30 && @.category=="fiction")]` | Filter all fiction books cheaper than 30                    |
+| `$..*`                                            | All members of JSON structure                               |
 
 ## Methods
 
 ### jp.query(obj, pathExpression[, count][, $])
 
-Find elements in `obj` matching `pathExpression`.  Returns an array of elements that satisfy the provided JSONPath expression, or an empty array if none were matched.  Returns only first `count` elements if specified.
+Find elements in `obj` matching `pathExpression`. Returns an array of elements that satisfy the provided JSONPath expression, or an empty array if none were matched. Returns only first `count` elements if specified.
 
 ```javascript
-var authors = jp.query(data, '$..author');
+var authors = jp.query(data, "$..author");
 // [ 'Nigel Rees', 'Evelyn Waugh', 'Herman Melville', 'J. R. R. Tolkien' ]
 ```
 
@@ -165,8 +166,7 @@ A context value `$` may be provided. The contents of `$` may be accessed in
 script and filter expressions.
 
 ```javascript
-var bargains = jp.query(data, 
-  "$..book[?(@.price <= $.price)]", { price: 10 });
+var bargains = jp.query(data, "$..book[?(@.price <= $.price)]", { price: 10 });
 // [
 //   {
 //     category: 'reference',
@@ -186,10 +186,10 @@ var bargains = jp.query(data,
 
 ### jp.paths(obj, pathExpression[, count][, $])
 
-Find paths to elements in `obj` matching `pathExpression`.  Returns an array of element paths that satisfy the provided JSONPath expression. Each path is itself an array of keys representing the location within `obj` of the matching element.  Returns only first `count` paths if specified.
+Find paths to elements in `obj` matching `pathExpression`. Returns an array of element paths that satisfy the provided JSONPath expression. Each path is itself an array of keys representing the location within `obj` of the matching element. Returns only first `count` paths if specified.
 
 ```javascript
-var paths = jp.paths(data, '$..author');
+var paths = jp.paths(data, "$..author");
 // [
 //   ['$', 'store', 'book', 0, 'author'] },
 //   ['$', 'store', 'book', 1, 'author'] },
@@ -202,10 +202,10 @@ If you'd prefer to receive paths as strings check out [Pragma Chains](#pragma-ch
 
 ### jp.nodes(obj, pathExpression[, count][, $])
 
-Find elements and their corresponding paths in `obj` matching `pathExpression`.  Returns an array of node objects where each node has a `path` containing an array of keys representing the location within `obj`, and a `value` pointing to the matched element.  Returns only first `count` nodes if specified.
+Find elements and their corresponding paths in `obj` matching `pathExpression`. Returns an array of node objects where each node has a `path` containing an array of keys representing the location within `obj`, and a `value` pointing to the matched element. Returns only first `count` nodes if specified.
 
 ```javascript
-var nodes = jp.nodes(data, '$..author');
+var nodes = jp.nodes(data, "$..author");
 // [
 //   { path: ['$', 'store', 'book', 0, 'author'], value: 'Nigel Rees' },
 //   { path: ['$', 'store', 'book', 1, 'author'], value: 'Evelyn Waugh' },
@@ -216,13 +216,14 @@ var nodes = jp.nodes(data, '$..author');
 
 ### jp.value(obj, pathExpression[, newValue[, $]])
 
-Returns the value of the first element matching `pathExpression`.  If `newValue` is provided, sets the value of the first matching element and returns the new value.
+Returns the value of the first element matching `pathExpression`. If `newValue` is provided, sets the value of the first matching element and returns the new value.
 
 If you need to pass a context value without a `newValue` you must explicitly pass `undefined` as `newValue`.
 
 ```javascript
-var bargain = jp.value(data, 
-  "$..book[?(@.price <= $.price)]", undefined, { price: 10 })
+var bargain = jp.value(data, "$..book[?(@.price <= $.price)]", undefined, {
+  price: 10
+});
 ```
 
 ### jp.parent(obj, pathExpression[, $])
@@ -234,8 +235,9 @@ Returns the parent of the first matching element.
 Runs the supplied function `fn` on each matching element, and replaces each matching element with any value returned from the function. The function is passed the value of each node and its path. Returns matching nodes with their updated values.
 
 ```javascript
-var nodes = jp.apply(data, 
-  '$..author', function(value, path) { return value.toUpperCase() });
+var nodes = jp.apply(data, "$..author", function (value, path) {
+  return value.toUpperCase();
+});
 // [
 //   { path: ['$', 'store', 'book', 0, 'author'], value: 'NIGEL REES' },
 //   { path: ['$', 'store', 'book', 1, 'author'], value: 'EVELYN WAUGH' },
@@ -247,7 +249,9 @@ var nodes = jp.apply(data,
 If `fn` returns nothing (`undefined`) the node's value will not be replaced.
 
 ```javascript
-jp.apply(data, '$..author', function(value, path) { console.log(value) });
+jp.apply(data, "$..author", function (value, path) {
+  console.log(value);
+});
 // Nigel Rees
 // Evelyn Waugh
 // Herman Melville
@@ -268,7 +272,7 @@ const obj = jp.visit(undefined, "$", () => "Hello");
 Parse the provided JSONPath expression into path components and their associated operations.
 
 ```javascript
-var path = jp.parse('$..author');
+var path = jp.parse("$..author");
 // [
 //   { expression: { type: 'root', value: '$' } },
 //   { expression: { type: 'identifier', value: 'author' }, operation: 'member', scope: 'descendant' }
@@ -277,10 +281,10 @@ var path = jp.parse('$..author');
 
 ### jp.stringify(path)
 
-Returns a path expression in string form, given a path.  The supplied path may either be a flat array of keys, as returned by `jp.nodes` for example, or may alternatively be a fully parsed path expression in the form of an array of path components as returned by `jp.parse`.
+Returns a path expression in string form, given a path. The supplied path may either be a flat array of keys, as returned by `jp.nodes` for example, or may alternatively be a fully parsed path expression in the form of an array of path components as returned by `jp.parse`.
 
 ```javascript
-var pathExpression = jp.stringify(['$', 'store', 'book', 0, 'author']);
+var pathExpression = jp.stringify(["$", "store", "book", 0, "author"]);
 // "$.store.book[0].author"
 ```
 
@@ -288,7 +292,7 @@ var pathExpression = jp.stringify(['$', 'store', 'book', 0, 'author']);
 
 The methods described above potentially walk the whole of an object returning both interior and leaf nodes. When they return a path it is in the form of an array which may be stringified using `jp.stringify()`.
 
-Perhaps instead you'd like to get the *stringified* paths of all the *leaf* nodes in an object. The behaviour of `jp` can be altered using pragmatic chains:
+Perhaps instead you'd like to get the _stringified_ paths of all the _leaf_ nodes in an object. The behaviour of `jp` can be altered using pragmatic chains:
 
 ```javascript
 const leaves = jp.string.leaf.paths(obj, "$..*");
@@ -304,11 +308,11 @@ const leaves = jp.string.leaf.paths(obj, "$..*");
 
 The available pragmas are `leaf`, `interior` and `string`.
 
-pragma     | effect
----        | ---
-`leaf`     | only visit leaf (non-object) nodes
-`interior` | the opposite of `leaf`: only visit non-leaf (object) nodes
-`string`   | where applicable stringify paths before returning them
+| pragma     | effect                                                     |
+| ---------- | ---------------------------------------------------------- |
+| `leaf`     | only visit leaf (non-object) nodes                         |
+| `interior` | the opposite of `leaf`: only visit non-leaf (object) nodes |
+| `string`   | where applicable stringify paths before returning them     |
 
 The order of the pragmas is unimportant but you should try to use them in a consistent order for maximum efficiency.
 
@@ -333,7 +337,7 @@ for (let x = 0; x < 3; x++)
 
 Because the path is different each time, every call to `jp.value()` has to compile and cache a new function to handle it. Only if you run the code again later will the cached versions be used.
 
-A more efficient approach is to use a backtick literal tagged with `jp`. 
+A more efficient approach is to use a backtick literal tagged with `jp`.
 
 ```javascript
 const matrix = [];
@@ -343,13 +347,13 @@ for (let x = 0; x < 3; x++)
       jp`$[${x}][${y}][${z}]`.value(matrix, { x, y, z });
 ```
 
-In this case the path is compiled only once (with placeholders for the bound x, y and z values). 
+In this case the path is compiled only once (with placeholders for the bound x, y and z values).
 
 Internally the `$` context variable is used to pass the bound values to the generated path function.
 
 ## Nests
 
-Sometimes you need to run many JSONpath queries against each one of a number of objects. Instead of compiling each individual path into its own Javascript  function a Nest allows multiple paths to be compiled into a single function.
+Sometimes you need to run many JSONpath queries against each one of a number of objects. Instead of compiling each individual path into its own Javascript function a Nest allows multiple paths to be compiled into a single function.
 
 ```javascript
 const survey = [];
@@ -364,7 +368,7 @@ nest(data); // the nest is a function
 // All prices increased by 10%, survey and authors arrays populated
 ```
 
-Calling the nest function runs all the actions that you have registered with the nest. Actions with paths that share a common prefix are efficiently compiled so that the prefix is traversed only once. In the following  example the code to traverse `$.assets[*]..meta` is executed only once for each call to `nest()`
+Calling the nest function runs all the actions that you have registered with the nest. Actions with paths that share a common prefix are efficiently compiled so that the prefix is traversed only once. In the following example the code to traverse `$.assets[*]..meta` is executed only once for each call to `nest()`
 
 ```javascript
 nest
@@ -413,7 +417,7 @@ A nest inherits pragmas from the `jp` that creates it, so this is equivalent to 
 ```javascript
 const nest = jp.string.leaf.nest();
 nest.visitor("$..*", (value, path) => {
-  console.log(`${path}: ${value}`)
+  console.log(`${path}: ${value}`);
 });
 ```
 
@@ -450,16 +454,21 @@ const obj = mp(undefined);
 Register a visitor function that will be called for each matching node in the object. The function is called with three arguments: value and path and any `$` context that was passed to the nest function..
 
 ```javascript
-nest.string.visitor("$..books[*].authors[(@.length - 1)].name",
-  (value, path, $) => console.log(`${path}: ${value}`));
+nest.string.visitor(
+  "$..books[*].authors[(@.length - 1)].name",
+  (value, path, $) => console.log(`${path}: ${value}`)
+);
 ```
 
 If you don't need the path provide a function that accepts only a single value argument; the generated code is slightly faster if it doesn't have to track the path as it traverses the object.
 
 ```javascript
-nest.visitor("$..books[*].authors[(@.length - 1)].name", 
-  value => console.log(value));
+nest.visitor("$..books[*].authors[(@.length - 1)].name", value =>
+  console.log(value)
+);
 ```
+
+The `path` argument may be a single path string or an array of paths.
 
 ### nest.mutator(path, fn)
 
@@ -475,6 +484,8 @@ If the replacement value is a constant it may be passed directly.
 nest.mutator("$..price", price => 1); // everything's a £
 ```
 
+The `path` argument may be a single path string or an array of paths.
+
 ### nest.setter(path, fn)
 
 Like `mutator` but with vivification enabled. Like `mutator` it accepts either a function or a constant.
@@ -483,31 +494,35 @@ Like `mutator` but with vivification enabled. Like `mutator` it accepts either a
 nest.setter("$.this.does.not.exist.yet", true);
 ```
 
+The `path` argument may be a single path string or an array of paths.
+
 ### nest.at(path, code)
 
 Inject code directly into the generated nest function. Within the supplied code `@` is a magic variable which provides access to various contextual values.
 
 ```javascript
-nest.at("$..vehicle", "console.log(@.value, @.path)")
+nest.at("$..vehicle", "console.log(@.value, @.path)");
 ```
 
 The `@` pseudo-variable has these properties
 
-Property       | Description
----------------|-------------
-`@.value`      | The value of the current node
-`@.nvalue`     | Non-vivifying version of `@.value` (see below)
-`@.parent`     | The parent of the current node
-`@.pathArray`  | The path to the current node as an array `["$", "books", 0, "author"]`
-`@.pathString` | The path to the current node as a string
-`@.path`       | The path as either an array or a string depending on the ambient `string` pragma
+| Property       | Description                                                                      |
+| -------------- | -------------------------------------------------------------------------------- |
+| `@.value`      | The value of the current node                                                    |
+| `@.nvalue`     | Non-vivifying version of `@.value` (see below)                                   |
+| `@.parent`     | The parent of the current node                                                   |
+| `@.pathArray`  | The path to the current node as an array `["$", "books", 0, "author"]`           |
+| `@.pathString` | The path to the current node as a string                                         |
+| `@.path`       | The path as either an array or a string depending on the ambient `string` pragma |
 
 When `@.value` is used on the left hand side of an assignment it tells the code generator to vivify as far as possible the path leading up to this node. If vivifaction is not desired the code may assign to `@.nvalue` instead.
 
 ```javascript
-nest.at("$..flags.seen", "@.value = true");  // create `seen`
+nest.at("$..flags.seen", "@.value = true"); // create `seen`
 nest.at("$..flags.seen", "@.nvalue = true"); // only sets existing `seen`
 ```
+
+The `path` argument may be a single path string or an array of paths.
 
 ### nest.nest(path)
 
@@ -524,4 +539,3 @@ nest
 ## License
 
 [MIT](LICENSE)
-
