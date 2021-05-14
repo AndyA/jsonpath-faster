@@ -3,7 +3,7 @@
 const tap = require("tap");
 const genfun = require("generate-function");
 
-const { parseSlice, renderSlice, makeSlice } = require("../lib/slicer");
+const { makeSlice } = require("../lib/slicer");
 
 function runSlice(list, slice) {
   const ns = {};
