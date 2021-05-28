@@ -14,7 +14,7 @@ tap.test(`recursive`, async () => {
       pathString: () => ({ code: "jp.stringify(@.path)" })
     })
   );
-  tap.equals(expr, "jp.stringify(path);", `recursive resolution`);
+  tap.equal(expr, "jp.stringify(path);", `recursive resolution`);
 });
 
 tap.test(`syntax`, async () => {
@@ -24,7 +24,7 @@ tap.test(`syntax`, async () => {
       pathString: () => ({ code: "jp.stringify(@.path)" })
     })
   );
-  tap.equals(expr, "jp.stringify(path).length;", `syntax`);
+  tap.equal(expr, "jp.stringify(path).length;", `syntax`);
 });
 
 tap.test(`binding`, async () => {
