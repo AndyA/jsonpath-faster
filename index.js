@@ -8,9 +8,17 @@ const selectorCompiler = require("./lib/compiler/selectors");
 const structureCompiler = require("./lib/compiler/structure");
 const lib = require("./lib/compiler/lib");
 
-function JSONPath() {
+function makeCache() {
+  const cache = {};
+  return (pragmaKey, path, cb) => {
+    const key = pragmaKey + ":" + path;
+    return (cache[key] = cache[key] || cb());
+  };
+}
+
+function JSONPath(cache) {
   const compiler = new Compiler(structureCompiler, selectorCompiler, lib);
-  const engine = makeEngine(compiler);
+  const engine = makeEngine(compiler, cache || makeCache());
 
   const construct = proto => {
     // Handle tagged template literals
