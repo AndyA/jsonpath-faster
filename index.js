@@ -1,7 +1,7 @@
 "use strict";
 
 const Compiler = require("./lib/compiler");
-const Cache = require("./lib/compat/cache");
+const Engine = require("./lib/compat/engine");
 const addPragmas = require("./lib/pragmas");
 
 const selectorCompiler = require("./lib/compiler/selectors");
@@ -12,7 +12,7 @@ function JSONPath() {
   const compiler = new Compiler(structureCompiler, selectorCompiler, lib);
 
   const construct = proto => {
-    const cache = new Cache(compiler);
+    const cache = new Engine(compiler);
 
     // Handle tagged template literals
     //  jp`$.foo[${x}]`.value(obj, true)
