@@ -18,7 +18,7 @@ function makeCache() {
 
 function JSONPath(cache) {
   const compiler = new Compiler(structureCompiler, selectorCompiler, lib);
-  const engine = makeEngine(compiler, cache || makeCache());
+  const engine = makeEngine(cache || makeCache());
 
   const construct = proto => {
     // Handle tagged template literals
@@ -36,7 +36,9 @@ function JSONPath(cache) {
       };
     };
 
-    return Object.assign(jp, proto, { JSONPath }, engine, {
+    return Object.assign(jp, proto, engine, {
+      JSONPath,
+      compiler,
       nest(path) {
         const { Nest } = require("./lib/nest");
         const mountPoint = path ? jp.parse(path) : [];
