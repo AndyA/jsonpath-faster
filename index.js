@@ -1,7 +1,7 @@
 "use strict";
 
 const Compiler = require("./lib/compiler");
-const Engine = require("./lib/compat/engine");
+const makeEngine = require("./lib/compat/engine");
 const addPragmas = require("./lib/pragmas");
 
 const selectorCompiler = require("./lib/compiler/selectors");
@@ -12,7 +12,7 @@ function JSONPath() {
   const compiler = new Compiler(structureCompiler, selectorCompiler, lib);
 
   const construct = proto => {
-    const cache = new Engine(compiler);
+    const engine = makeEngine(compiler);
 
     // Handle tagged template literals
     //  jp`$.foo[${x}]`.value(obj, true)
@@ -29,7 +29,7 @@ function JSONPath() {
       };
     };
 
-    return Object.assign(jp, proto, { JSONPath }, cache, {
+    return Object.assign(jp, proto, { JSONPath }, engine, {
       nest(path) {
         const { Nest } = require("./lib/nest");
         const mountPoint = path ? jp.parse(path) : [];
@@ -45,4 +45,4 @@ function JSONPath() {
   );
 }
 
-module.exports = new JSONPath();
+module.exports = JSONPath();
