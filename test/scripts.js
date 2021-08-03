@@ -2,7 +2,8 @@
 
 const tap = require("tap");
 const genfun = require("generate-function");
-const { bindScript, bindFilter, mkIdent } = require("../lib/scripts");
+const { bindScript, bindFilter } = require("../lib/scripts");
+const { mkIdent } = require("../lib/ident");
 
 const js = obj => JSON.stringify(obj);
 
