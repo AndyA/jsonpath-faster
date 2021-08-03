@@ -314,15 +314,6 @@ The available pragmas are `leaf`, `interior` and `string`.
 | `interior` | the opposite of `leaf`: only visit non-leaf (object) nodes |
 | `string`   | where applicable stringify paths before returning them     |
 
-The order of the pragmas is unimportant but you should try to use them in a consistent order for maximum efficiency.
-
-```javascript
-var n1 = jp.leaf.string.paths(obj, "$..*");
-var n2 = jp.string.leaf.paths(obj, "$..*");
-```
-
-The two lines above will cause the path `$..*` to be compiled twice - once in the 'leaf.string' cache and again in the 'string.leaf' cache.
-
 ## Tagged literal syntax
 
 You can populate a 3d matix like this but because the path is dynamic it's not the most efficient way.

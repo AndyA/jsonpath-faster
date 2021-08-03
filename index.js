@@ -10,10 +10,9 @@ const lib = require("./lib/compiler/lib");
 
 function JSONPath() {
   const compiler = new Compiler(structureCompiler, selectorCompiler, lib);
+  const engine = makeEngine(compiler);
 
   const construct = proto => {
-    const engine = makeEngine(compiler);
-
     // Handle tagged template literals
     //  jp`$.foo[${x}]`.value(obj, true)
     const jp = (parts, ...$) => {
