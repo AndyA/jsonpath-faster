@@ -527,6 +527,10 @@ nest
   .visitor("$.modified", value => {});
 ```
 
+## CI Status
+
+![CI Status](https://github.com/AndyA/jsonpath-faster/actions/workflows/node.js.yml/badge.svg)
+
 ## License
 
 [MIT](LICENSE)
