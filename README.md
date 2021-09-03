@@ -531,6 +531,8 @@ nest
 
 ![CI Status](https://github.com/AndyA/jsonpath-faster/actions/workflows/node.js.yml/badge.svg)
 
+[![CodeQL](https://github.com/AndyA/jsonpath-faster/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/AndyA/jsonpath-faster/actions/workflows/codeql-analysis.yml)
+
 ## License
 
 [MIT](LICENSE)
