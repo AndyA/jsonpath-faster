@@ -472,7 +472,7 @@ nest.mutator("$..price", price => price * 3);
 If the replacement value is a constant it may be passed directly.
 
 ```javascript
-nest.mutator("$..price", price => 1); // everything's a £
+nest.mutator("$..price", 1); // everything's a £
 ```
 
 The `path` argument may be a single path string or an array of paths.
