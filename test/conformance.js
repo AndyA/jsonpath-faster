@@ -7,6 +7,8 @@ const jpc = require("..");
 const obj = require("./upstream/data/store");
 const paths = require("./data/paths");
 
+tap.setTimeout(60000);
+
 for (const attempt of [1, 2]) {
   for (const path of paths) {
     for (const method of ["query", "paths", "nodes"]) {
