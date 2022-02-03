@@ -7,38 +7,6 @@ on:
     branches: [main]
 
 jobs:
-  build_arm:
-    runs-on: [self-hosted, ARM]
-
-    strategy:
-      matrix:
-        node-version: [14.x, 16.x, 17.x]
-
-    steps:
-      - uses: actions/checkout@v2
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ matrix.node-version }}
-      - run: npm ci
-      - run: npm test
-
-  build_x64:
-    runs-on: [self-hosted, x64]
-
-    strategy:
-      matrix:
-        node-version: [10.x, 11.x, 12.x, 13.x, 14.x, 15.x, 16.x, 17.x]
-
-    steps:
-      - uses: actions/checkout@v2
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ matrix.node-version }}
-      - run: npm ci
-      - run: npm test
-
   build:
     runs-on: ubuntu-latest
 
