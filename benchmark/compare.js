@@ -2,9 +2,10 @@
 
 const Benchmark = require("benchmark");
 const getWorkers = require("./lib/worker");
-const csv = require("csv-stringify/lib/sync");
 
 const spec = require("./spec");
+
+const csv = row => row.map(x => (isNaN(x) ? `"${x}"` : x)).join(",");
 
 const reporter = sendLine => {
   const cols = new Set();
@@ -32,7 +33,11 @@ const reporter = sendLine => {
 async function bm(things, spec) {
   const { obj, paths, methods, counts } = spec;
   const workers = await getWorkers(things);
-  const rep = reporter(row => process.stdout.write(csv([row])));
+  const sheet = [];
+  const rep = reporter(row => sheet.push(csv(row)));
+
+  let seen = 0;
+  const discard = obj => seen++;
 
   for (const path of paths) {
     for (const method of methods) {
@@ -42,20 +47,20 @@ async function bm(things, spec) {
         const name = `${path}\t${method}\t${count === undefined ? "∞" : count}`;
 
         for (const w of workers) {
-          suite.add(`${w.name}\t${name}`, function() {
-            w.jp[method](obj, path, count);
+          suite.add(`${w.name}\t${name}`, function () {
+            discard(w.jp[method](obj, path, count));
           });
         }
 
         // add listeners
         suite
-          .on("cycle", function(event) {
+          .on("cycle", function (event) {
             console.error(`  ${event.target}`);
           })
-          .on("complete", function() {
+          .on("complete", function () {
             rep(this);
           })
-          .on("error", function(e) {
+          .on("error", function (e) {
             console.error(e);
             process.exit(1);
           })
@@ -63,17 +68,17 @@ async function bm(things, spec) {
       }
     }
   }
+
+  console.log(sheet.join("\n"));
 }
 
-const defaultThings = ["jsonpath", "baseline", "HEAD"];
+const defaultArgs = ["jsonpath", "baseline", "HEAD"];
 
-(async () => {
+(async args => {
   try {
-    let things = process.argv.slice(2);
-    if (things.length === 0) things = defaultThings;
-    await bm(things, spec);
+    await bm(args.length === 0 ? defaultArgs : args, spec);
   } catch (e) {
     console.error(e);
     process.exit(1);
   }
-})();
+})(process.argv.slice(2));

@@ -61,7 +61,7 @@ class Checkout {
       if (!exists) await this.clone(dir);
       const git = sg({ baseDir: dir });
 
-      await git.checkout("master");
+      await git.checkout("main");
       await git.pull();
       await git.checkout(what);
 
