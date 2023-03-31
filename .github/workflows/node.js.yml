@@ -1,4 +1,3 @@
-# Run tests on various node versions
 name: Node CI
 
 on:
